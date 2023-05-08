@@ -2,8 +2,56 @@ let web3;
 let userAddress;
 let contractInstance;
 
+async function getConnectedNetwork() {
+    const web3 = new Web3(window.ethereum);
+    const networkId = await web3.eth.net.getId();
+    const networkType = await web3.eth.net.getNetworkType();
+    return { networkId, networkType };
+}
+
+async function switchToMumbai() {
+    const mumbaiChain = {
+        chainId: '0x13881',
+        chainName: 'Mumbai Testnet',
+        nativeCurrency: {
+            name: 'Matic',
+            symbol: 'MATIC',
+            decimals: 18,
+        },
+        rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+        blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+    };
+
+    try {
+        // Önce Mumbai ağını kullanıcının cüzdanına ekleyin
+        await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [mumbaiChain],
+        });
+
+        // Ardından Mumbai ağına geçin
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x13881' }],
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
 async function initialize() {
     if (window.ethereum) {
+        const { networkId } = await getConnectedNetwork();
+        if (networkId != 80001){
+            try {
+                await switchToMumbai();
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
         web3 = new Web3(window.ethereum);
         try {
             await window.ethereum.request({ method: "eth_requestAccounts" });
