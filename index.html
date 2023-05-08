@@ -3,18 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play to Earn Oyunu</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <title>Play to Earn Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
 </head>
 <body>
-    <h1>Play to Earn Oyunu</h1>
-    <button id="connect">MetaMask'a Bağlan</button>
-    <h2 id="account"></h2>
-    
-    <button id="play-game">Oyunu Oyna</button>
-    <button id="claim-reward">Ödülü Talep Et</button>
-
-    <script src="game.js"></script>
+    <button id="connectMetamask">Connect Metamask</button>
+    <div id="pumpSection" style="display:none;">
+        <button id="purchasePump">Pompa Satın Al (3 OWL)</button>
+        <div>
+            <label for="depositAmount">Deposit Amount:</label>
+            <input type="number" id="depositAmount" />
+            <button id="deposit">Deposit</button>
+        </div>
+        <div>
+            <label for="withdrawAmount">Withdraw Amount:</label>
+            <input type="number" id="withdrawAmount" />
+            <button id="withdraw">Withdraw</button>
+        </div>
+        <h3>Sahip olduğunuz pompa sayısı: <span id="pumpCount">0</span></h3>
+        <div>
+            <h2>Your Balance</h2>
+            <p id="balance">0</p>
+        </div>
+    </div>
+    <div id="stationSection" style="display:none;">
+        <button id="purchaseStation">İstasyon Satın Al</button>
+    </div>
+    <script src="app.js"></script>
     <script src="config.js"></script>
 </body>
 </html>
