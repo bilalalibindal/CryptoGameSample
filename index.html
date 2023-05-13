@@ -2,34 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play to Earn Game</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
 </head>
 <body>
-    <button id="connectMetamask">Connect Metamask</button>
-    <div id="pumpSection" style="display:none;">
-        <button id="purchasePump">Pompa Satın Al (3 OWL)</button>
-        <div>
-            <label for="depositAmount">Deposit Amount:</label>
-            <input type="number" id="depositAmount" />
-            <button id="deposit">Deposit</button>
+    <nav id="navbar">
+       
+            <img src="./images/Default_gas_pump_logo_5_cf859bdd-09e7-43de-97b2-e1c44936b0e5_0.png" width="100" alt="">
+            
+            <ul>
+                <li>Home</li>
+                <li>
+                    <a href="index2.html" class="secret" target="_blank">Play</a>
+                </li>
+                <li>About Us</li>
+                <a  id="connect">Connect To MetaMask</a>
+            </ul>
+        
+    </nav>
+    <section class="container1">
+        <div class="card">
+            <h1 style="color:white;font-size: 50px;text-align: center;font-style: italic;">PETROL WORLD</h1>
+            <p style="margin-bottom: 30px;color: white;font-size: 24px;line-height: 1.5rem;text-align: center;">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Qui magnam officia esse, unde praesentium iste perferendis ipsam fuga quia! Voluptates!
+            </p>
+            <div class="matic">
+                <a href="">Connect 5 Matic</a>
+            </div>
+            
         </div>
-        <div>
-            <label for="withdrawAmount">Withdraw Amount:</label>
-            <input type="number" id="withdrawAmount" />
-            <button id="withdraw">Withdraw</button>
+        
+    </section>
+    <section class="container2">
+        <div class="card1">
+            <img src="./images/Default_2D_gas_pump_in_png_format_use_dark_tunes_0_03964dd4-eda5-4168-ad82-6b3f4132c1ea_0.png" width="400" alt="">
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore debitis veritatis quo doloribus minus, possimus iusto suscipit error totam veniam. Reiciendis quasi maiores earum molestiae, voluptatum ipsum minima et! Sint.
+            </p>
+            <div class="link">
+                <a href="">Learn More</a>
+            </div>
+            
         </div>
-        <h3>Sahip olduğunuz pompa sayısı: <span id="pumpCount">0</span></h3>
-        <div>
-            <h2>Your Balance</h2>
-            <p id="balance">0</p>
+        <div class="card1">
+            <img src="./images/Default_simple_oil_refinery_png_format_3_457a9c6b-e009-4c58-9755-8aafc5c1dc01_0.png" width="400" height="266" alt="">
+            <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Soluta earum nobis, voluptas obcaecati accusantium ipsam odit eaque similique quod corporis rem sit quisquam quis eius! Laudantium quasi cumque quia sapiente?
+            </p>
+            <div class="link">
+                <a href="">Learn More</a>
+            </div>
+            
         </div>
-    </div>
-    <div id="stationSection" style="display:none;">
-        <button id="purchaseStation">İstasyon Satın Al</button>
-    </div>
-    <script src="app.js"></script>
+    </section>
+    <footer id="footer">
+        <ul>
+            <li>
+                <i  class="fa-brands fa-discord icon"></i>
+                <a href="">discord</a>
+            </li>
+            <li>
+                <i  class="fa-brands fa-twitter icon"></i>
+                <a href="">twitter</a>
+            </li>
+            <li>
+                <i  class="fa-brands fa-youtube icon"></i>
+                <a href="">youtube</a>
+            </li>
+        </ul>
+    </footer>
     <script src="config.js"></script>
+    <script src="app.js"></script>
+    
 </body>
 </html>
