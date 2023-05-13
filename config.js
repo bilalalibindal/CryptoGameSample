@@ -285,17 +285,6 @@ var tokenAbi = [
 
 var contractAbi = [
 	{
-		"inputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "_pwlToken",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"inputs": [],
 		"name": "buyExtraPlace",
 		"outputs": [],
@@ -338,6 +327,56 @@ var contractAbi = [
 			}
 		],
 		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "reFuel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "_pwlToken",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "upgradePump",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -454,19 +493,6 @@ var contractAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "reFuel",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -494,19 +520,6 @@ var contractAbi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "upgradePump",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -586,19 +599,6 @@ var contractAbi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0x4c7517BB1693eD3BE2D2a53C370b283a744aea33"; // Deneme sözleşmesinin adresi
+var contractAddress = "0x5b6ecb22Ff1442F3682f3D1a84A8d13A2fc26c9D"; // Deneme sözleşmesinin adresi

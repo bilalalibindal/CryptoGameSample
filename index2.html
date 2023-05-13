@@ -11,9 +11,9 @@
       <div class="container">
         <div class="card">
           <button id="connectMetamask" class="button">Connect Metamask</button>
-          <button style="display: block;" id="buyStation" class="button">Buy Station</button>
+          <button style="display: block;" id="buy-station-button" class="button">Buy Station</button>
         </div>
-        <div style="display: block;" class="card">
+        <div id="topMenu" style="display: none;" class="card">
         <ul>
           <li id="tokenBalance">
             Token Amount:
@@ -29,7 +29,7 @@
           </li>
         </ul>
         </div>
-        <div style="display: block;" class="card">
+        <div id="bankMenu" style="display: none;" class="card">
           <div>
             <input id="depositAmount" type="number">
             <button class="button" id="deposit-button">Deposit</button>
@@ -40,12 +40,12 @@
           </div>
         </div>
       </div>
-      <div class="container1">
+      <div id="pumpMenu" style="display: none;" class="container1">
         <div class="pump">
           <div class="pump-part">
-            <label>level 1</label>
-            <label>time</label>
-            <label>fuel amount</label>
+            <label id="pump0-level">level 1</label>
+            <label id="pump0-time">time</label>
+            <label id="pump0-fuel">fuel amount</label>
             <img src="./images/1.png" width="300" alt="">
             <div>
                 <button id="buy-button" class="button1">buyy</button>
@@ -55,9 +55,9 @@
           
           </div>
           <div class="pump-part">
-            <label>level 1</label>
-            <label>time</label>
-            <label>fuel amount</label>
+            <label id="pump1-level">level 1</label>
+            <label id="pump1-time">time</label>
+            <label id="pump1-fuel">fuel amount</label>
             <img src="./images/2.png" width="300" alt="">
             <div>
               <button class="button1">buy</button>
@@ -67,9 +67,9 @@
             
           </div>
           <div class="pump-part">
-            <label>level 1</label>
-            <label>time</label>
-            <label>fuel amount</label>
+            <label id="pump2-level">level 1</label>
+            <label id="pump2-time">time</label>
+            <label id="pump2-fuel">fuel amount</label>
             <img src="./images/3.png" width="300" alt="">
             <div>
               <button class="button1">buy</button>
@@ -79,9 +79,9 @@
             
           </div>
           <div class="pump-part">
-            <label>level 1</label>
-            <label>time</label>
-            <label>fuel amount</label>
+            <label id="pump3-level">level 1</label>
+            <label id="pump3-time">time</label>
+            <label id="pump3-fuel">fuel amount</label>
             <img src="./images/1.png" width="300" alt="">
             <div>
               <button class="button1">buy</button>
@@ -91,9 +91,9 @@
           <button style="margin-top: 10px;" class="button1">1 Matic</button>
           </div>
           <div class="pump-part">
-            <label>level 1</label>
-            <label>time</label>
-            <label>fuel amount</label>
+            <label id="pump4-level">level 1</label>
+            <label id="pump4-time">time</label>
+            <label id="pump4-fuel">fuel amount</label>
             <img src="./images/2.png" width="300" alt="">
             <div>
               <button class="button1">buy</button>

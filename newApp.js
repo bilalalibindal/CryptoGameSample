@@ -9,6 +9,7 @@ class DApp {
     setupEventListeners() {
         //document.getElementById('create-pump-button').addEventListener('click', () => this.createPump());
         document.getElementById('connectMetamask').addEventListener('click', () => this.initialize());
+        document.getElementById('buy-station-button').addEventListener('click', () => this.buyStation());
         document.getElementById('deposit-button').addEventListener('click', () => this.deposit());
         document.getElementById('withdraw-button').addEventListener('click', () => this.withdraw());
         document.getElementById('buy-button').addEventListener('click', () => this.createPump());
@@ -68,14 +69,31 @@ class DApp {
     }
     
     async getUserFeatures() {
-        const users = await this.contractInstance.methods.users(this.userAddress).call();
-        const userPumpsLength = await this.contractInstance.methods.getUserPumpsLength(this.userAddress).call();
-        const isStationOwner = users.isStationOwner;
-        const maxPumps = users.maxPumps;
-        const depositBalance = await this.contractInstance.methods.depositBalance(this.userAddress).call()
-        return { userPumpsLength, isStationOwner, maxPumps, depositBalance };
+        let users = await this.contractInstance.methods.users(this.userAddress).call();
+        let isStationOwner = users.isStationOwner;
+        let maxPumps = users.maxPumps;
+        let depositBalance = await this.contractInstance.methods.depositBalance(this.userAddress).call()
+        this.isStationOwner = isStationOwner;
+        this.depositBalance = depositBalance;
+        this.maxPumps = maxPumps;
     }
-    
+    async getPumpFeatures() {
+        let userPumpsLength = await this.contractInstance.methods.getUserPumpsLength(this.userAddress).call();
+        var createCost = await this.contractInstance.methods.getUpgradeCost(1).call();
+        this.createCost = createCost;
+        this.userPumpsLength = userPumpsLength;
+    }
+    async updatePumps() {
+        for(let index = 0; index<this.userPumpsLength; index++){
+            let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
+            let level = pumpAtIndex.level;
+            let fuelCapacity = pumpAtIndex.fuelCapacity;
+            const pumpLevel = document.getElementById(`pump${index}-level`);
+            const pumpFuel = document.getElementById(`pump${index}-fuel`);
+            pumpLevel.textContent = `Level: ${level}`;
+            pumpFuel.textContent = `Capacity: ${fuelCapacity}`;
+        }
+    }
     async updateDepositBalance() {
         let balanceElement = document.getElementById("balance");
         let balance = await this.contractInstance.methods.depositBalance(this.userAddress).call();
@@ -98,16 +116,46 @@ class DApp {
         maticBalance = this.web3.utils.fromWei(maticBalance, 'ether');
         maticBalanceElement.textContent = `MATIC: ${parseFloat(maticBalance).toFixed(1)}`;
     }
+    async updateMenus() {
+        if (this.isStationOwner) {
+            document.getElementById("buy-station-button").style.display = "none";
+            document.getElementById("topMenu").style.display = "block";
+            document.getElementById("bankMenu").style.display = "block";
+            document.getElementById("pumpMenu").style.display = "block";
+        } else {
+            document.getElementById("buy-station-button").style.display = "block";
+            document.getElementById("topMenu").style.display = "none";
+            document.getElementById("bankMenu").style.display = "none";
+            document.getElementById("pumpMenu").style.display = "none";
+        }
+    }
     async updateUI() {
-        let {userPumpsLength, isStationOwner, maxPumps, depositBalance } = await this.getUserFeatures();
+        await this.getUserFeatures();
+        await this.getPumpFeatures();
+        await this.updatePumps();
+        this.updateMenus()
         this.updateDepositBalance();
         this.updateFuelPrice();
         this.updateMaticBalance();
+        
         console.log("Wallet: ", this.userAddress);
-        console.log("PumpsLength: ", userPumpsLength);
-        console.log("Is station owner: ", isStationOwner);
-        console.log("Max Pumps: ", maxPumps);
-        console.log("Deposit Balance: ", depositBalance);
+        console.log("PumpsLength: ", this.userPumpsLength);
+        console.log("Is station owner: ", this.isStationOwner);
+        console.log("Max Pumps: ", this.maxPumps);
+        console.log("Deposit Balance: ", this.depositBalance);
+        console.log("Create Cost ", this.createCost);
+    }
+
+    async buyStation() {
+        try {
+            await this.contractInstance.methods.buyStation().send({
+                from: this.userAddress,
+                value: this.web3.utils.toWei("0.01", "ether")
+            });
+            this.updateUI();
+        } catch (error) {
+            console.error("İstasyon satın alma işlemi başarısız oldu.");
+        }
     }
 
     async deposit() {
@@ -134,7 +182,7 @@ class DApp {
     }
     
     async createPump() {
-        const result = await this.contractInstance.methods.createPump().call();
+        const result = await this.contractInstance.methods.createPump().send({ from: this.userAddress });
         console.log("Pump created successfully:", result);
     }
 }
