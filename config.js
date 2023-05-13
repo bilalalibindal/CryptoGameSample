@@ -339,7 +339,7 @@ var contractAbi = [
 				"type": "uint256"
 			}
 		],
-		"name": "reFuel",
+		"name": "refuelPump",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -544,7 +544,7 @@ var contractAbi = [
 			},
 			{
 				"internalType": "bool",
-				"name": "isActive",
+				"name": "isWorking",
 				"type": "bool"
 			},
 			{
@@ -601,4 +601,4 @@ var contractAbi = [
 		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0x5b6ecb22Ff1442F3682f3D1a84A8d13A2fc26c9D"; // Deneme sözleşmesinin adresi
+var contractAddress = "0x6d7D25D46FeD0e89fAe94127bb8f940057D7Ca71"; // Deneme sözleşmesinin adresi

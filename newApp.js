@@ -4,8 +4,12 @@ class DApp {
         this.contractInstance = new this.web3.eth.Contract(contractAbi, contractAddress);
         this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // tokenContract tanımlanması
         this.userAddress = "";
+        if (this.userAddress != "") {
+            document.addEventListener("DOMContentLoaded", this.updateUI.bind(this));
+        }
+        
     }
-
+    
     setupEventListeners() {
         //document.getElementById('create-pump-button').addEventListener('click', () => this.createPump());
         document.getElementById('connectMetamask').addEventListener('click', () => this.initialize());
@@ -13,6 +17,22 @@ class DApp {
         document.getElementById('deposit-button').addEventListener('click', () => this.deposit());
         document.getElementById('withdraw-button').addEventListener('click', () => this.withdraw());
         document.getElementById('buy-button').addEventListener('click', () => this.createPump());
+        document.getElementById('buy-place-button').addEventListener('click', () => this.buyPlace());
+        document.getElementById('collect-button-0').addEventListener('click', () => this.collectPump(0));
+        document.getElementById('refuel-button-0').addEventListener('click', () => this.refuelPump(0));
+        document.getElementById('upgrade-button-0').addEventListener('click', () => this.upgradePump(0));
+        document.getElementById('collect-button-1').addEventListener('click', () => this.collectPump(1));
+        document.getElementById('refuel-button-1').addEventListener('click', () => this.refuelPump(1));
+        document.getElementById('upgrade-button-1').addEventListener('click', () => this.upgradePump(1));
+        document.getElementById('collect-button-2').addEventListener('click', () => this.collectPump(2));
+        document.getElementById('refuel-button-2').addEventListener('click', () => this.refuelPump(2));
+        document.getElementById('upgrade-button-2').addEventListener('click', () => this.upgradePump(2));
+        document.getElementById('collect-button-3').addEventListener('click', () => this.collectPump(3));
+        document.getElementById('refuel-button-3').addEventListener('click', () => this.refuelPump(3));
+        document.getElementById('upgrade-button-3').addEventListener('click', () => this.upgradePump(3));
+        document.getElementById('collect-button-4').addEventListener('click', () => this.collectPump(4));
+        document.getElementById('refuel-button-4').addEventListener('click', () => this.refuelPump(4));
+        document.getElementById('upgrade-button-4').addEventListener('click', () => this.upgradePump(4));
     }
 
     async getConnectedNetwork() {
@@ -84,10 +104,19 @@ class DApp {
         this.userPumpsLength = userPumpsLength;
     }
     async updatePumps() {
+        if(this.userPumpsLength >= 3) {
+            let buyPlace = document.getElementById("buy-place-button");
+            buyPlace.style.display = "block";
+        }
         for(let index = 0; index<this.userPumpsLength; index++){
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
+            let pump = document.getElementById(`pump${index}`);
+            let pumpImg = document.getElementById(`pump${index}-img`);
+            pump.style.display = "block";
+            pump.style.display = "flex";
+            pumpImg.src = `./images/${level}.png`;
             const pumpLevel = document.getElementById(`pump${index}-level`);
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
@@ -144,13 +173,14 @@ class DApp {
         console.log("Max Pumps: ", this.maxPumps);
         console.log("Deposit Balance: ", this.depositBalance);
         console.log("Create Cost ", this.createCost);
+        
     }
 
     async buyStation() {
         try {
             await this.contractInstance.methods.buyStation().send({
                 from: this.userAddress,
-                value: this.web3.utils.toWei("0.01", "ether")
+                value: this.web3.utils.toWei("0.0", "ether")
             });
             this.updateUI();
         } catch (error) {
@@ -184,6 +214,25 @@ class DApp {
     async createPump() {
         const result = await this.contractInstance.methods.createPump().send({ from: this.userAddress });
         console.log("Pump created successfully:", result);
+        this.updateUI();
+    }
+    async collectPump(pumpIndex) {
+        await this.contractInstance.methods.collect(pumpIndex).send({ from: this.userAddress });
+        this.updateUI();
+    }
+    async refuelPump(pumpIndex) {
+        await this.contractInstance.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
+        this.updateUI();
+    }
+    async upgradePump(pumpIndex) {
+        await this.contractInstance.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
+        this.updateUI();
+    }
+    async buyPlace() {
+        await this.contractInstance.methods.buyExtraPlace().send({ 
+            from: this.userAddress,
+            value: this.web3.utils.toWei("0.0", "ether") });
+        this.updateUI();
     }
 }
 
