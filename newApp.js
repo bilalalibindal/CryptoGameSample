@@ -139,17 +139,17 @@ class DApp {
     
             // Yeni bir setInterval oluştur ve ID'sini sakla
             this.intervalIDs[index] = setInterval(() => {
-                this.pumpCountDowns[index] -= 0.1;
+                this.pumpCountDowns[index] -= 1;
                 if (this.pumpCountDowns[index] <= 0) {
                     clearInterval(this.intervalIDs[index]);
                     timeElement.innerText = `Ready`;
                     timeBarElements.style.width = '0%';
                     return;
                 }
-                timeElement.innerText = `Time: ${parseFloat(this.pumpCountDowns[index]).toFixed(0)}`;
+                timeElement.innerText = `Time: ${this.pumpCountDowns[index]}`;
                 let percentRemaining = (this.pumpCountDowns[index] / pumpAtIndex.refuelTime) * 100;
                 timeBarElements.style.width = `${percentRemaining}%`;
-            },100);
+            },1000);
         }
     }
     
