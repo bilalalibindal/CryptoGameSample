@@ -112,6 +112,11 @@ class DApp {
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
+            let pumpCountDown = await this.contractInstance.methods
+            .getRemainingCooldown(index)
+            .call({ from: this.userAddress });
+            console.log("Cool Down: ", pumpCountDown);
+            let timeElement = document.getElementById(`pump${index}-time`);
             let pump = document.getElementById(`pump${index}`);
             let pumpImg = document.getElementById(`pump${index}-img`);
             pump.style.display = "block";
@@ -121,6 +126,15 @@ class DApp {
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
             pumpFuel.textContent = `Capacity: ${fuelCapacity}`;
+            setInterval(() => {
+                pumpCountDown--;
+                if (pumpCountDown <= 0) {
+                    clearInterval(this);
+                    timeElement.innerText = `Ready`;
+                    return;
+                }
+                timeElement.innerText = `Time: ${pumpCountDown}`;
+            },1000);
         }
     }
     async updateDepositBalance() {

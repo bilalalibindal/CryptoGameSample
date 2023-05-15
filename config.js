@@ -285,6 +285,17 @@ var tokenAbi = [
 
 var contractAbi = [
 	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "_pwlToken",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"inputs": [],
 		"name": "buyExtraPlace",
 		"outputs": [],
@@ -334,56 +345,6 @@ var contractAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "refuelPump",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "_pwlToken",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "upgradePump",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -403,6 +364,25 @@ var contractAbi = [
 	{
 		"inputs": [],
 		"name": "getCurrentFuelPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "getRemainingCooldown",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -493,6 +473,19 @@ var contractAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "refuelPump",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -520,6 +513,19 @@ var contractAbi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "upgradePump",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -599,6 +605,19 @@ var contractAbi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0x6d7D25D46FeD0e89fAe94127bb8f940057D7Ca71"; // Deneme sözleşmesinin adresi
+var contractAddress = "0x9Eb7876373b8F8704C514B86b59fD192176878db"; // Deneme sözleşmesinin adresi
