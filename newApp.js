@@ -5,6 +5,7 @@ class DApp {
         this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // tokenContract tanımlanması
         this.userAddress = "";
         this.pumpCountDowns = [];
+        this.intervalIDs = [];
         if (this.userAddress != "") {
             document.addEventListener("DOMContentLoaded", this.updateUI.bind(this));
         }
@@ -109,13 +110,11 @@ class DApp {
             let buyPlace = document.getElementById("buy-place-button");
             buyPlace.style.display = "block";
         }
-        
-        // Interval ID'lerini saklamak için bir dizi oluşturun
-        this.intervalIDs = [];
         for(let index = 0; index<this.userPumpsLength; index++){
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
+            let pumpActivity = pumpAtIndex.isWorking;
             this.pumpCountDowns[index] = await this.contractInstance.methods
             .getRemainingCooldown(index)
             .call({ from: this.userAddress });
