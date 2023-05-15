@@ -4,6 +4,7 @@ class DApp {
         this.contractInstance = new this.web3.eth.Contract(contractAbi, contractAddress);
         this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // tokenContract tanımlanması
         this.userAddress = "";
+        this.pumpCountDowns = [];
         if (this.userAddress != "") {
             document.addEventListener("DOMContentLoaded", this.updateUI.bind(this));
         }
@@ -108,15 +109,19 @@ class DApp {
             let buyPlace = document.getElementById("buy-place-button");
             buyPlace.style.display = "block";
         }
+        
+        // Interval ID'lerini saklamak için bir dizi oluşturun
+        this.intervalIDs = [];
         for(let index = 0; index<this.userPumpsLength; index++){
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
-            let pumpCountDown = await this.contractInstance.methods
+            this.pumpCountDowns[index] = await this.contractInstance.methods
             .getRemainingCooldown(index)
             .call({ from: this.userAddress });
-            console.log("Cool Down: ", pumpCountDown);
+            console.log("Cool Down: ", this.pumpCountDowns[index]);
             let timeElement = document.getElementById(`pump${index}-time`);
+            let timeBarElements = document.getElementById(`pump${index}-progress`);
             let pump = document.getElementById(`pump${index}`);
             let pumpImg = document.getElementById(`pump${index}-img`);
             pump.style.display = "block";
@@ -126,17 +131,28 @@ class DApp {
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
             pumpFuel.textContent = `Capacity: ${fuelCapacity}`;
-            setInterval(() => {
-                pumpCountDown--;
-                if (pumpCountDown <= 0) {
-                    clearInterval(this);
+    
+            // Eğer önceden bir setInterval varsa onu temizle
+            if(this.intervalIDs[index]) {
+                clearInterval(this.intervalIDs[index]);
+            }
+    
+            // Yeni bir setInterval oluştur ve ID'sini sakla
+            this.intervalIDs[index] = setInterval(() => {
+                this.pumpCountDowns[index] -= 0.1;
+                if (this.pumpCountDowns[index] <= 0) {
+                    clearInterval(this.intervalIDs[index]);
                     timeElement.innerText = `Ready`;
+                    timeBarElements.style.width = '0%';
                     return;
                 }
-                timeElement.innerText = `Time: ${pumpCountDown}`;
-            },1000);
+                timeElement.innerText = `Time: ${parseFloat(this.pumpCountDowns[index]).toFixed(0)}`;
+                let percentRemaining = (this.pumpCountDowns[index] / pumpAtIndex.refuelTime) * 100;
+                timeBarElements.style.width = `${percentRemaining}%`;
+            },100);
         }
     }
+    
     async updateDepositBalance() {
         let balanceElement = document.getElementById("balance");
         let balance = await this.contractInstance.methods.depositBalance(this.userAddress).call();
