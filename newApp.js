@@ -170,7 +170,7 @@ class DApp {
             const pumpLevel = document.getElementById(`pump${index}-level`);
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
-            pumpFuel.textContent = `Capacity: ${fuelCapacity}`;
+            pumpFuel.innerHTML = `Capacity: ${fuelCapacity}`;
             console.log(`pumpIsWorking-${index}`,pumpIsWorking);
             console.log(`pumpCountDowns-${index}`,this.pumpCountDowns[index]);
             console.log(`pumpFuel-${index}`,pumpAtIndex.fuel);
