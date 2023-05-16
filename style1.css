@@ -56,11 +56,20 @@
     justify-content: center;
     align-items: center;
 }
-.button1{
+.button1 .enabled{
     padding: 10px;
     border: none;
     color: white;
     background-color: orangered;
+    border-radius: 10px;
+    font-size: 17px;
+}
+.button1 .disabled {
+    /* Tıklanamaz butonlar için stil */
+    padding: 10px;
+    border: none;
+    color: #888; /* koyu gri renk */
+    background-color: #ccc; /* gri renk */
     border-radius: 10px;
     font-size: 17px;
 }
@@ -70,10 +79,9 @@
     border-radius: 10px;
 }
   
-  .progress {
+.progress {
     height: 20px;
     background-color: #4caf50;
     border-radius: 10px;
     width: 100%;
 }
-  

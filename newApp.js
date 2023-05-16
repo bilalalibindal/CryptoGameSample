@@ -9,7 +9,6 @@ class DApp {
         if (this.userAddress != "") {
             document.addEventListener("DOMContentLoaded", this.updateUI.bind(this));
         }
-        
     }
     
     setupEventListeners() {
@@ -82,6 +81,7 @@ class DApp {
                 this.userAddress = accounts[0];
                 this.contractInstance = new this.web3.eth.Contract(contractAbi, contractAddress);
                 this.updateUI();
+                this.updatePumpButtons();
             } catch (error) {
                 console.error("Kullanıcı hesabına erişim reddedildi. Lütfen tekrar deneyin.", error);
             }
@@ -105,6 +105,43 @@ class DApp {
         this.createCost = createCost;
         this.userPumpsLength = userPumpsLength;
     }
+    async updatePumpButtons() {
+        for(let index = 0; index<this.userPumpsLength; index++){
+            let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
+            let pumpIsWorking = pumpAtIndex.isWorking;
+            let collectButton = document.getElementById(`collect-button-${index}`);
+            let refuelButton = document.getElementById(`refuel-button-${index}`);
+            let upgradeButton = document.getElementById(`upgrade-button-${index}`);
+            if (pumpIsWorking && this.pumpCountDowns[index]>0) {
+                console.log("1");
+                collectButton.disabled = true; 
+                collectButton.className = "disabled"; 
+                refuelButton.disabled = true; 
+                refuelButton.className = "disabled"; 
+                upgradeButton.disabled = true; 
+                upgradeButton.className = "disabled"; 
+
+            } else if (pumpIsWorking && this.pumpCountDowns[index] <= 0) {
+                console.log("2");
+                collectButton.disabled = false; 
+                collectButton.className = "enabled";
+                refuelButton.disabled = true; 
+                refuelButton.className = "disabled"; 
+                upgradeButton.disabled = true; 
+                upgradeButton.className = "disabled"; 
+            } else if (!pumpIsWorking && pumpAtIndex.fuel == 0) {
+                console.log("3");
+                collectButton.disabled = true; 
+                collectButton.className = "disabled"; 
+                refuelButton.disabled = false;
+                refuelButton.className = "enabled";
+                upgradeButton.disabled = false; 
+                upgradeButton.className = "enabled";
+            } else {
+                console.log("4");
+            }
+        }
+    }
     async updatePumps() {
         if(this.userPumpsLength >= 3) {
             let buyPlace = document.getElementById("buy-place-button");
@@ -114,7 +151,7 @@ class DApp {
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
-            let pumpActivity = pumpAtIndex.isWorking;
+            let pumpIsWorking = pumpAtIndex.isWorking;
             this.pumpCountDowns[index] = await this.contractInstance.methods
             .getRemainingCooldown(index)
             .call({ from: this.userAddress });
@@ -123,6 +160,10 @@ class DApp {
             let timeBarElements = document.getElementById(`pump${index}-progress`);
             let pump = document.getElementById(`pump${index}`);
             let pumpImg = document.getElementById(`pump${index}-img`);
+            let upgradeButton = document.getElementById(`upgrade-button-${index}`);
+            if (level >= 3){
+                upgradeButton.style.display = "none";
+            }
             pump.style.display = "block";
             pump.style.display = "flex";
             pumpImg.src = `./images/${level}.png`;
@@ -130,12 +171,14 @@ class DApp {
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
             pumpFuel.textContent = `Capacity: ${fuelCapacity}`;
-    
+            console.log(`pumpIsWorking-${index}`,pumpIsWorking);
+            console.log(`pumpCountDowns-${index}`,this.pumpCountDowns[index]);
+            console.log(`pumpFuel-${index}`,pumpAtIndex.fuel);
             // Eğer önceden bir setInterval varsa onu temizle
-            if(this.intervalIDs[index]) {
+            if (this.intervalIDs[index]) {
                 clearInterval(this.intervalIDs[index]);
             }
-    
+            
             // Yeni bir setInterval oluştur ve ID'sini sakla
             this.intervalIDs[index] = setInterval(() => {
                 this.pumpCountDowns[index] -= 1;
@@ -143,6 +186,7 @@ class DApp {
                     clearInterval(this.intervalIDs[index]);
                     timeElement.innerText = `Ready`;
                     timeBarElements.style.width = '0%';
+                    this.updatePumpButtons();
                     return;
                 }
                 timeElement.innerText = `Time: ${this.pumpCountDowns[index]}`;
