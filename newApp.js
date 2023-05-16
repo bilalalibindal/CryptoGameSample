@@ -89,7 +89,9 @@ class DApp {
             console.error("Ethereum tarayıcı eklentisi bulunamadı.");
         }
     }
-    
+    async getUpgradeCosts(level) {
+        return await this.contractInstance.methods.getUpgradeCost(level).call();
+    }
     async getUserFeatures() {
         let users = await this.contractInstance.methods.users(this.userAddress).call();
         let isStationOwner = users.isStationOwner;
@@ -101,19 +103,22 @@ class DApp {
     }
     async getPumpFeatures() {
         let userPumpsLength = await this.contractInstance.methods.getUserPumpsLength(this.userAddress).call();
-        var createCost = await this.contractInstance.methods.getUpgradeCost(1).call();
+        var createCost = await this.getUpgradeCosts(1)
         this.createCost = createCost;
+        this.upgradeCost_2 = await this.getUpgradeCosts(2)
+        this.upgradeCost_3 = await this.getUpgradeCosts(3)
         this.userPumpsLength = userPumpsLength;
     }
     async updatePumpButtons() {
         for(let index = 0; index<this.userPumpsLength; index++){
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
+            let level = pumpAtIndex.level;
             let pumpIsWorking = pumpAtIndex.isWorking;
+            let buyButton = document.getElementById(`buy-button`);
             let collectButton = document.getElementById(`collect-button-${index}`);
             let refuelButton = document.getElementById(`refuel-button-${index}`);
             let upgradeButton = document.getElementById(`upgrade-button-${index}`);
             if (pumpIsWorking && this.pumpCountDowns[index]>0) {
-                console.log("1");
                 collectButton.disabled = true; 
                 collectButton.className = "disabled"; 
                 refuelButton.disabled = true; 
@@ -122,7 +127,6 @@ class DApp {
                 upgradeButton.className = "disabled"; 
 
             } else if (pumpIsWorking && this.pumpCountDowns[index] <= 0) {
-                console.log("2");
                 collectButton.disabled = false; 
                 collectButton.className = "enabled";
                 refuelButton.disabled = true; 
@@ -130,15 +134,21 @@ class DApp {
                 upgradeButton.disabled = true; 
                 upgradeButton.className = "disabled"; 
             } else if (!pumpIsWorking && pumpAtIndex.fuel == 0) {
-                console.log("3");
                 collectButton.disabled = true; 
                 collectButton.className = "disabled"; 
                 refuelButton.disabled = false;
                 refuelButton.className = "enabled";
                 upgradeButton.disabled = false; 
                 upgradeButton.className = "enabled";
-            } else {
-                console.log("4");
+            }
+            buyButton.innerText = `buy\n${this.web3.utils.fromWei(this.createCost)} PWL`;
+            collectButton.innerText = `collect\n${this.fuelPriceInEther * pumpAtIndex.fuelCapacity} PWL`;
+            refuelButton.innerText = `Refuel\n${parseFloat(this.fuelPriceInEther * pumpAtIndex.fuelCapacity * 0.05).toFixed(4)} PWL`;
+            if (level == 1) {
+                upgradeButton.innerText = `upgrade\n${this.web3.utils.fromWei(this.upgradeCost_2)} PWL`;
+            }
+            else if (level == 2) {
+                upgradeButton.innerText = `upgrade\n${this.web3.utils.fromWei(this.upgradeCost_3)} PWL`;
             }
         }
     }
@@ -151,7 +161,6 @@ class DApp {
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let fuelCapacity = pumpAtIndex.fuelCapacity;
-            let pumpIsWorking = pumpAtIndex.isWorking;
             this.pumpCountDowns[index] = await this.contractInstance.methods
             .getRemainingCooldown(index)
             .call({ from: this.userAddress });
@@ -171,9 +180,6 @@ class DApp {
             const pumpFuel = document.getElementById(`pump${index}-fuel`);
             pumpLevel.textContent = `Level: ${level}`;
             pumpFuel.innerHTML = `Capacity: ${fuelCapacity}`;
-            console.log(`pumpIsWorking-${index}`,pumpIsWorking);
-            console.log(`pumpCountDowns-${index}`,this.pumpCountDowns[index]);
-            console.log(`pumpFuel-${index}`,pumpAtIndex.fuel);
             // Eğer önceden bir setInterval varsa onu temizle
             if (this.intervalIDs[index]) {
                 clearInterval(this.intervalIDs[index]);
@@ -205,8 +211,8 @@ class DApp {
     async updateFuelPrice() {
         const fuelPriceElement = document.getElementById("fuelPrice");
         const fuelPrice = await this.contractInstance.methods.getCurrentFuelPrice().call();
-        const fuelPriceInEther = this.web3.utils.fromWei(fuelPrice);
-        fuelPriceElement.textContent = `Fuel Price: ${fuelPriceInEther}`;
+        this.fuelPriceInEther = this.web3.utils.fromWei(fuelPrice);
+        fuelPriceElement.textContent = `Fuel Price: ${this.fuelPriceInEther}`;
     }
     
     async updateMaticBalance() {
