@@ -1,0 +1,166 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+#navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0A0F11;
+    opacity: 0.9;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+#navbar ul{
+    display: flex;
+    list-style: none;
+}
+#navbar ul li{
+    margin: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+#connect{
+    background-color: white;
+    border-radius: 30px;
+    padding: 10px 20px;
+    color: #03A9F4;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.5s;
+}
+#connect:hover{
+    color: white;
+    background-color: #03A9F4;
+    cursor: pointer;
+}
+.card{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.matic{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container1{
+    background-image: url(./images/Leonardo_Diffusion_Gas_station_near_the_road_with_retro_game_a_2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 900px;
+}
+.container1 h1{
+    font-size: 30px;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.container1 img{
+    margin-bottom: 15px;
+}
+.container1 a{
+    text-decoration: none;
+    color: orange;
+    border-radius: 30px;
+    padding: 15px 20px;
+    background-color: white;
+    font-size: 24px;
+    transition: all 0.5s;
+}
+.container1 a:hover{
+    background-color: orange;
+    color: white;
+}
+.container2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #31454C;
+}
+.container2 img{
+    display: block;
+    margin: 0 auto;
+}
+.container2  p{
+    font-size: 20px;
+    text-align: center;
+   color: white;
+}
+.container2 .card1{
+    margin: 10px;
+}
+.link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+.link a{
+    text-decoration: none;
+    color: white;
+    border-radius: 20px;
+    background-color: #03A9F4;
+    padding: 15px 25px;
+    font-size: 20px;
+}
+
+#footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    padding: 30px;
+}
+#footer ul{
+   list-style:none;
+   display: flex;
+}
+#footer ul li{
+    margin: 10px 20px;
+    transition: all 0.5s;
+}
+#footer ul li a{
+    text-decoration: none;
+    color: white;
+    font-size: 24px;
+    font-style: italic;
+    transition: all 0.5s;
+}
+#footer ul li:hover{
+    transform: translateY(8px);
+}
+#footer ul li a:hover{
+    color: #03A9F4;
+}
+.icon{
+    border: 1px solid #437480;
+    color: white;
+    padding: 10px;
+    margin-right: 5px;
+    transition: all 0.5s;
+}
+.icon:hover{
+    color: #437480;
+    background-color: white;
+}
+.secret{
+    text-decoration: none;
+    color: white;
+    border-radius: 30px;
+    border: 1px solid #437480;
+    padding: 10px 25px;
+    font-size: 20px;
+    transition: all 0.5s;
+}
+.secret:hover{
+    color: #437480;
+    background-color: white;
+}
