@@ -11,6 +11,8 @@ body{
     justify-content: space-between;
     padding: 20px;
     display: none;
+    position: relative;
+    top: 0;
 }
 .container .card-part{
     display: flex;
@@ -33,7 +35,6 @@ body{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    display: none;
 }
 .part2 .button1{
     margin-top: 15px;
@@ -119,7 +120,7 @@ body{
     height: 35px;
     background-color: #A8C488;
     border-radius: 30px;
-    width: 60%;
+    width: 0%;
 } 
 .time-bar{
     width: 50%;
@@ -141,7 +142,7 @@ body{
   
   .progress-bar-fill {
     background-color: #FBD116;
-    height: 70%; 
+    height: 0%; 
     width: 100%;
   }
   .popup {

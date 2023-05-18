@@ -43,34 +43,34 @@
         <div class="card-part1">
           <img src="./images/coin.png" alt="">
           <p style="margin-top: 10px;" class="size">TOTAL MATIC</p>
-          <p style="margin-top: 10px;color: red;font-size: 40px;">7248</p>
+          <p id="matic-pool" style="margin-top: 10px;color: red;font-size: 40px;"></p>
         </div>
       
       </div>
     </div>
+    <button id="buy-pump-button" class="matic">buy</button>
     <div class="part2">
       <img src="./images/station.png"  width="300" alt="">
-      <button id="buy-station-button" class="button1">Buy Station<br>7 MATIC</button>
+      <button id="buy-station-button" class="button1">Buy Station<br>0 MATIC</button>
     </div>
 
     <div class="container2">
       <div class="card1">
         <div id="pump-section-0" class="card1-part1">
-          <div style="position: relative;left: 20px;">
+          <div style="position: relative;left: 70px; bottom: 45px;">
             <img src="./images/fuel.png" style="position: relative;right: 10px;" width="50" alt="">
             <div class="progress-bar-vertical">
-              <div class="progress-bar-fill"></div>
+              <div id="fuel-bar-0" class="progress-bar-fill"></div>
             </div>
           </div>
           <div>
-            <img src="./images/star0.png" width="50" style="display: block;margin: 0 auto;" alt="">
-            <img id="pump-img-0" src="" width="200" alt="">
+            <img id="pump-img-0" src="" width="300" alt="">
            
             <div style="display: flex;justify-content: center;align-items: center; flex-direction: column;">
-              <div id="pump0-progress-bar" class="time-bar">
-                <div id="pump0-progress" class="time"></div>
+              <div id="pump-progress-bar-0" class="time-bar">
+                <div id="pump-progress-0" class="time"></div>
               </div>
-              <p class="size" style="margin:10px 0px;">TIME:356</p>
+              <p id="pump-time-0" class="size" style="margin:10px 0px;">TIME:356</p>
               <div>
                 <button id="collect-button-0" class="collect">COLLECT</button>
                 <button id="refuel-button-0" class="refuel">REFUEL</button>
@@ -89,21 +89,20 @@
           </div>
         </div>
         <div id="pump-section-1" class="card1-part1">
-          <div style="position: relative;left: 30px;">
-            <img src="./images/fuel.png" style="position: relative;right: 10px;" width="50" alt="">
+          <div style="position: relative;left: 70px; bottom: 45px;">
+            <img src="./images/fuel.png" style="position: relative;right:10px;" width="50" alt="">
             <div class="progress-bar-vertical">
-              <div class="progress-bar-fill"></div>
+              <div id="fuel-bar-1" class="progress-bar-fill"></div>
             </div>
           </div>
           <div>
-            <img src="./images/star1.svg" width="150" style="display: block;margin: 0 auto;" alt="">
             <img id="pump-img-1" src="" width="300" alt="">
            
             <div style="display: flex;justify-content: center;align-items: center; flex-direction: column;">
-              <div id="pump0-progress-bar" class="time-bar">
-                <div id="pump0-progress" class="time"></div>
+              <div id="pump-progress-bar-1" class="time-bar">
+                <div id="pump-progress-1" class="time"></div>
               </div>
-              <p class="size" style="margin:10px 0px;">TIME:356</p>
+              <p id="pump-time-1" class="size" style="margin:10px 0px;">TIME:356</p>
               <div>
                 <button id="collect-button-1" class="collect">COLLECT</button>
                 <button id="refuel-button-1" class="refuel">REFUEL</button>
@@ -122,21 +121,20 @@
           </div>
         </div>
         <div id="pump-section-2" class="card1-part1">
-          <div style="position: relative;left: 40px;">
+          <div style="position: relative;left: 70px; bottom: 45px;">
             <img src="./images/fuel.png" style="position: relative;right:10px;" width="50" alt="">
             <div class="progress-bar-vertical">
-              <div class="progress-bar-fill"></div>
+              <div id="fuel-bar-2" class="progress-bar-fill"></div>
             </div>
           </div>
           <div>
-            <img src="./images/star2.svg" width="150" style="display: block;margin: 0 auto;" alt="">
             <img id="pump-img-2" src=""  width="300" alt="">
            
             <div style="display: flex;justify-content: center;align-items: center; flex-direction: column;">
-              <div id="pump0-progress-bar" class="time-bar">
-                <div id="pump0-progress" class="time"></div>
+              <div id="pump-progress-bar-2" class="time-bar">
+                <div id="pump-progress-2" class="time"></div>
               </div>
-              <p class="size" style="margin:10px 0px;">TIME:356</p>
+              <p id="pump-time-2" class="size" style="margin:10px 0px;">TIME:356</p>
               <div>
                 <button id="collect-button-2" class="collect">COLLECT</button>
                 <button id="refuel-button-2" class="refuel">REFUEL</button>

@@ -13,6 +13,7 @@ class DApp {
     setupEventListeners() {
         this.buyStationButton_HTML.addEventListener('click', () => this.buyStation());
         // Pump Buttons
+        document.getElementById('buy-pump-button').addEventListener('click', () => this.createPump());
         document.getElementById('collect-button-0').addEventListener('click', () => this.collectPump(0));
         document.getElementById('refuel-button-0').addEventListener('click', () => this.refuelPump(0));
         document.getElementById('upgrade-button-0').addEventListener('click', () => this.upgradePump(0));
@@ -74,10 +75,7 @@ class DApp {
                 // Get user's metamask address.
                 const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
                 this.userAddress = accounts[0]; // bring and define user's first address from metamask.
-                await this.defineFromContract(); // run set variables function.
-                this.defineFromHTML();
-                this.updateUI(); // Update page and bring user's variables from smart contract
-                this.setupEventListeners();
+                this.buildPage();
                 console.log(this.userAddress);
             } catch (error) {
                 console.error("Access denied, please try again.", error);
@@ -106,10 +104,9 @@ class DApp {
         this.totalMined = await this.contract.methods.totalMined().call({ from: this.userAddress })
         // Get value of current fuel price
         this.fuelPrice = this.web3.utils.fromWei(await this.contract.methods.getCurrentFuelPrice().call());
-        // Define create and upgrade costs
-        this.createPumpCost = this.getUpgradeCosts(1);
-        this.upgradeCost_2 = this.getUpgradeCosts(2);
-        this.upgradeCost_3 = this.getUpgradeCosts(3);
+        this.web3.eth.getBalance(contractAddress, (err, wei) => { 
+            this.maticPoolAmount = this.web3.utils.fromWei(wei, 'ether'); 
+        });
     }
     /* ---------------------------------------------- EVENT METHODS ---------------------------------------------- */
     async buyStation() {
@@ -118,7 +115,7 @@ class DApp {
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether")
             })
-            this.updateUI();
+            this.buildPage();
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
@@ -129,7 +126,7 @@ class DApp {
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether")
             })
-            this.updateUI();
+            // Update method here
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
@@ -137,26 +134,46 @@ class DApp {
     async createPump() {
         const result = await this.contract.methods.createPump().send({ from: this.userAddress });
         console.log("Pump created successfully:", result);
-        this.updateUI();
+        this.basicUpdate();
+        this.buildPumps();
     }
     async collectPump(pumpIndex) {
         await this.contract.methods.collect(pumpIndex).send({ from: this.userAddress });
-        this.updateUI();
+        this.basicUpdate();
+        this.buildPump(pumpIndex);
     }
     async refuelPump(pumpIndex) {
         await this.contract.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
-        this.updateUI();
+        this.basicUpdate();
+        this.buildPump(pumpIndex);
     }
     async upgradePump(pumpIndex) {
         await this.contract.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
-        this.updateUI();
+        this.basicUpdate();
+        this.buildPump(pumpIndex);
     }
     /* ---------------------------------------------- UPDATE METHODS ---------------------------------------------- */
+    async buildPage() {
+        await this.defineFromContract(); // run set variables function.
+        this.defineFromHTML();
+        this.checkStation();
+        this.updateUI(); // Update page and bring user's variables from smart contract
+        this.buildPumps();
+        this.setupEventListeners();
+    }
+    async buildPumps() {
+        this.updateAllPump();
+        this.updateAllPumpFeatures();
+        this.updateAllPumpCooldown();
+    }
+    async buildPump(pumpIndex) {
+        this.updatePump(pumpIndex);
+        this.updatePumpFeatures(pumpIndex);
+        this.updatePumpCooldown(pumpIndex);
+    }
     async updateUI() {
         await this.defineFromContract();
-        this.checkStation();
         this.basicUpdate();
-        await this.loadPumps();
     }
     async checkStation() { // Check is user has station.
         if (!this.isStationOwner) {
@@ -172,39 +189,111 @@ class DApp {
             this.displayContainer3();
         } 
     }
-    basicUpdate() {
+    async basicUpdate() {
+        await this.defineFromContract();
         this.depositBalance_HTML.innerText = this.tokenBalance;
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
+        this.maticPool_HTML.innerText = this.maticPoolAmount;
     }
-    async loadPumps() {
+    async updateAllPump(){
         for(let index = 0; index<this.userPumpsLength; index++){
-            let pump = await this.contract.methods.userPumps(this.userAddress, index).call();
-            let pumpSection = document.getElementById(`pump-section-${index}`);
-            let pumpImg = document.getElementById(`pump-img-${index}`);
-            let pumpFuelCapacity = document.getElementById(`pump-fuel-capacity-${index}`);
-            let pumpCollectButton = document.getElementById(`collect-button-${index}`);
-            let pumpRefuelButton = document.getElementById(`refuel-button-${index}`);
-            let pumpUpgradeButton = document.getElementById(`upgrade-button-${index}`);
-            
-            if (pump.level >= 3){
-                pumpUpgradeButton.style.display = "none";
-            }
-            pumpSection.style.display = "block";
-            pumpSection.style.display = "flex";
-            pumpImg.src = `./images/pump${pump.level}.svg`;
-            pumpFuelCapacity.innerText = pump.fuelCapacity;
-            console.log(pump.fuelCapacity * this.fuelPrice);
-            pumpCollectButton.innerText = `COLLECT\n${pump.fuelCapacity * this.fuelPrice} PWL`;
-            pumpRefuelButton.innerText = `REFUEL\n${pump.fuelCapacity * this.fuelPrice * 0.05} PWL`;
-            pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei
-                (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
+            this.updatePump(index);
         }
-
+    }
+    async updateAllPumpFeatures(){
+        for(let index = 0; index<this.userPumpsLength; index++){
+            this.updatePumpFeatures(index);
+        }
+    }
+    async updateAllPumpCooldown(){
+        for(let index = 0; index<this.userPumpsLength; index++){
+            this.updatePumpCooldown(index);
+        }
+    }
+    async updatePump(pumpIndex) {
+        let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
+        let pumpSection = document.getElementById(`pump-section-${pumpIndex}`);
+        let pumpImg = document.getElementById(`pump-img-${pumpIndex}`);
+        pumpSection.style.display = "flex";
+        pumpImg.src = `./images/pump${pump.level}.svg`;
+        
+    }
+    async updatePumpFeatures(pumpIndex) {
+        let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
+        let pumpFuelCapacity = document.getElementById(`pump-fuel-capacity-${pumpIndex}`);
+        let pumpCollectButton = document.getElementById(`collect-button-${pumpIndex}`);
+        let pumpRefuelButton = document.getElementById(`refuel-button-${pumpIndex}`);
+        let pumpUpgradeButton = document.getElementById(`upgrade-button-${pumpIndex}`);
+        let pumpFuelBar = document.getElementById(`fuel-bar-${pumpIndex}`);
+        const pumpIsWorking = pump.isWorking;
+        if (pump.level >= 3){
+            pumpUpgradeButton.style.display = "none";
+        }
+        if (pump.fuel != 0){
+            pumpFuelBar.style.height = "100%";
+        }
+        else {
+            pumpFuelBar.style.height = "0%";
+        }
+        pumpFuelCapacity.innerText = pump.fuelCapacity;
+        pumpCollectButton.innerText = `COLLECT\n${pump.fuelCapacity * this.fuelPrice} PWL`;
+        pumpRefuelButton.innerText = `REFUEL\n${pump.fuelCapacity * this.fuelPrice * 0.05} PWL`;
+        pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei
+            (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
+        if (pumpIsWorking && this.pumpCountDowns[pumpIndex]>0) {
+            pumpCollectButton.disabled = true; 
+            //pumpCollectButton.className = "disabled"; 
+            pumpRefuelButton.disabled = true; 
+            //pumpRefuelButton.className = "disabled"; 
+            pumpUpgradeButton.disabled = true; 
+            //pumpUpgradeButton.className = "disabled"; 
+        } else if (pumpIsWorking && this.pumpCountDowns[pumpIndex] <= 0) {
+            pumpCollectButton.disabled = false; 
+            //pumpCollectButton.className = "enabled";
+            pumpRefuelButton.disabled = true; 
+            //pumpRefuelButton.className = "disabled"; 
+            pumpUpgradeButton.disabled = true; 
+            //pumpUpgradeButton.className = "disabled"; 
+        } else if (!pumpIsWorking && pump.fuel == 0) {
+            pumpCollectButton.disabled = true; 
+            //pumpCollectButton.className = "disabled"; 
+            pumpRefuelButton.disabled = false;
+            //pumpRefuelButton.className = "enabled";
+            pumpUpgradeButton.disabled = false; 
+            //pumpUpgradeButton.className = "enabled";
+        }
+    }
+    async updatePumpCooldown(pumpIndex) {
+        let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
+        this.pumpCountDowns[pumpIndex] = await this.contract.methods
+            .getRemainingCooldown(pumpIndex)
+            .call({ from: this.userAddress });
+        let timeElement = document.getElementById(`pump-time-${pumpIndex}`);
+        let timeBarElement = document.getElementById(`pump-progress-${pumpIndex}`);
+        // Eğer önceden bir setInterval varsa onu temizle
+        if (this.intervalIDs[pumpIndex]) {
+            clearInterval(this.intervalIDs[pumpIndex]);
+        }
+        // Yeni bir setInterval oluştur ve ID'sini sakla
+        this.intervalIDs[pumpIndex] = setInterval(() => {
+            this.pumpCountDowns[pumpIndex] -= 1;
+            if (this.pumpCountDowns[pumpIndex] <= 0) {
+                clearInterval(this.intervalIDs[pumpIndex]);
+                timeElement.innerText = `Ready`;
+                timeBarElement.style.width = '0%';
+                this.buildPump(pumpIndex);
+                return;
+            }
+            timeElement.innerText = `Time: ${this.pumpCountDowns[pumpIndex]}`;
+            let percentRemaining = (this.pumpCountDowns[pumpIndex] / pump.refuelTime) * 100;
+            timeBarElement.style.width = `${percentRemaining}%`;
+        },1000);
     }
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
     defineFromHTML() { // Define html elements by id
         this.depositBalance_HTML = document.getElementById("deposit-balance");
         this.fuelPrice_HTML = document.getElementById("current-fuel-price");
+        this.maticPool_HTML = document.getElementById("matic-pool");
         this.buyStationButton_HTML = document.getElementById("buy-station-button");
         this.container_HTML = document.querySelectorAll(".container");
         this.container_2_HTML = document.querySelectorAll(".container2");
