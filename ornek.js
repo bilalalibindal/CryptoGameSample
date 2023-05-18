@@ -1,11 +1,13 @@
+// DApp class
 class DApp {
+    // Define important valuables and contracts in constructor
     constructor() {
-        this.web3 = new Web3(window.ethereum);
-        this.contractInstance = new this.web3.eth.Contract(contractAbi, contractAddress);
-        this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // tokenContract tanımlanması
+        this.web3 = new Web3(window.ethereum); // web3 library for metamask
+        this.contractInstance = new this.web3.eth.Contract(contractAbi, contractAddress); // Contract setup
+        this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // tokenContract
         this.userAddress = "";
-        this.pumpCountDowns = [];
-        this.intervalIDs = [];
+        this.pumpCountDowns = []; // Array for multiple count down times
+        this.intervalIDs = []; // Array for multiple count downs
         if (this.userAddress != "") {
             document.addEventListener("DOMContentLoaded", this.updateUI.bind(this));
         }
@@ -39,7 +41,7 @@ class DApp {
     async getConnectedNetwork() {
         const networkId = await window.ethereum.request({ method: 'eth_chainId' });
         return networkId;
-}
+    }
     async switchToMumbai() {
         const mumbaiChain = {
             chainId: '0x13881',
@@ -92,29 +94,28 @@ class DApp {
     async getUpgradeCosts(level) {
         return await this.contractInstance.methods.getUpgradeCost(level).call();
     }
-    async getUserFeatures() {
+    async getFeatures() {
         let users = await this.contractInstance.methods.users(this.userAddress).call();
-        let isStationOwner = users.isStationOwner;
-        let maxPumps = users.maxPumps;
         let depositBalance = await this.contractInstance.methods.depositBalance(this.userAddress).call()
-        this.isStationOwner = isStationOwner;
+        let totalMined = await this.contractInstance.methods.totalMined().call({ from: this.userAddress })
+        this.isStationOwner = users.isStationOwner;
         this.depositBalance = depositBalance;
-        this.maxPumps = maxPumps;
+        this.maxPumps = users.maxPumps;
+        this.totalMined = parseFloat(this.web3.utils.fromWei(totalMined)).toFixed(2);
     }
     async getPumpFeatures() {
         let userPumpsLength = await this.contractInstance.methods.getUserPumpsLength(this.userAddress).call();
-        var createCost = await this.getUpgradeCosts(1)
-        this.createCost = createCost;
         this.upgradeCost_2 = await this.getUpgradeCosts(2)
         this.upgradeCost_3 = await this.getUpgradeCosts(3)
         this.userPumpsLength = userPumpsLength;
     }
     async updatePumpButtons() {
+        let buyButton = document.getElementById(`buy-button`);
+        buyButton.innerText = `buy\n${this.web3.utils.fromWei(await this.getUpgradeCosts(1))} PWL`;
         for(let index = 0; index<this.userPumpsLength; index++){
             let pumpAtIndex = await this.contractInstance.methods.userPumps(this.userAddress, index).call();
             let level = pumpAtIndex.level;
             let pumpIsWorking = pumpAtIndex.isWorking;
-            let buyButton = document.getElementById(`buy-button`);
             let collectButton = document.getElementById(`collect-button-${index}`);
             let refuelButton = document.getElementById(`refuel-button-${index}`);
             let upgradeButton = document.getElementById(`upgrade-button-${index}`);
@@ -141,7 +142,6 @@ class DApp {
                 upgradeButton.disabled = false; 
                 upgradeButton.className = "enabled";
             }
-            buyButton.innerText = `buy\n${this.web3.utils.fromWei(this.createCost)} PWL`;
             collectButton.innerText = `collect\n${this.fuelPriceInEther * pumpAtIndex.fuelCapacity} PWL`;
             refuelButton.innerText = `Refuel\n${parseFloat(this.fuelPriceInEther * pumpAtIndex.fuelCapacity * 0.05).toFixed(4)} PWL`;
             if (level == 1) {
@@ -238,7 +238,8 @@ class DApp {
         }
     }
     async updateUI() {
-        await this.getUserFeatures();
+        await this.getFeatures();
+        console.log("Total Mined: ",this.totalMined);
         await this.getPumpFeatures();
         await this.updatePumps();
         this.updateMenus()
@@ -294,18 +295,22 @@ class DApp {
         const result = await this.contractInstance.methods.createPump().send({ from: this.userAddress });
         console.log("Pump created successfully:", result);
         this.updateUI();
+        this.updatePumpButtons();
     }
     async collectPump(pumpIndex) {
         await this.contractInstance.methods.collect(pumpIndex).send({ from: this.userAddress });
         this.updateUI();
+        this.updatePumpButtons();
     }
     async refuelPump(pumpIndex) {
         await this.contractInstance.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
         this.updateUI();
+        this.updatePumpButtons();
     }
     async upgradePump(pumpIndex) {
         await this.contractInstance.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
         this.updateUI();
+        this.updatePumpButtons();
     }
     async buyPlace() {
         await this.contractInstance.methods.buyExtraPlace().send({ 

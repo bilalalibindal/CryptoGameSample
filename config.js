@@ -285,19 +285,15 @@ var tokenAbi = [
 
 var contractAbi = [
 	{
-		"inputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "_pwlToken",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
+		"inputs": [],
+		"name": "buyExtraPlace",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "buyExtraPlace",
+		"name": "buyRefinery",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
@@ -343,22 +339,86 @@ var contractAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "depositMatic",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "depositBalance",
-		"outputs": [
-			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "drillOil",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "refuelPump",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "oilAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "sellOil",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "_pwlToken",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "pumpIndex",
+				"type": "uint256"
+			}
+		],
+		"name": "upgradePump",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -446,19 +506,6 @@ var contractAbi = [
 	},
 	{
 		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address payable",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "pwlToken",
 		"outputs": [
 			{
@@ -468,19 +515,6 @@ var contractAbi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "refuelPump",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -513,19 +547,6 @@ var contractAbi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "pumpIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "upgradePump",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -598,26 +619,33 @@ var contractAbi = [
 				"type": "bool"
 			},
 			{
+				"internalType": "bool",
+				"name": "isRefineryOwner",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lastDrillOilTime",
+				"type": "uint256"
+			},
+			{
 				"internalType": "uint256",
 				"name": "maxPumps",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenBalance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "oilBalance",
 				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0x9Eb7876373b8F8704C514B86b59fD192176878db"; // Deneme sözleşmesinin adresi
+var contractAddress = "0xA9ab3F93C5920965e0C3CE665f3E0b173E38Ed0e"; // Deneme sözleşmesinin adresi

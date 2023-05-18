@@ -4,94 +4,191 @@
     box-sizing: border-box;
 }
 body{
-    background-color: gray;
-}
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 48
+    background-color: #808080;
 }
 .container{
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding:15px;
+    padding: 20px;
+    display: none;
 }
-.container .card{
-    display: flex;
-    flex-direction: column;
-}
-.container .card ul {
+.container .card-part{
     display: flex;
     justify-content: center;
     align-items: center;
-    list-style: none;
-}
-.container .card ul li{
     margin: 10px;
-    font-size: 20px;
-    border: 1px solid gainsboro;
-    padding: 10px;
 }
-.container .card input{
-    border: 1px solid orangered;
-    padding: 10px;
-    outline: none;
-    font-size: 18px;
-}
-.container .button{
-    padding: 10px;
-    border: none;
-    margin-bottom: 10px;
-    color: white;
-    font-size: 20px;
-    background-color: orangered;
-    border-radius: 10px;
-    margin-left: 15px;
-}
-.container1{
-    margin-top: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.container1 .pump{
-    display: flex;
-}
-.container1 .pump .pump-part{
+.card-part1{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.button1 .enabled{
-    padding: 10px;
-    border: none;
-    color: white;
-    background-color: orangered;
-    border-radius: 10px;
-    font-size: 17px;
+.size{
+    font-size: 24px;
+    font-weight: bold;
 }
-.button1 .disabled {
-    /* Tıklanamaz butonlar için stil */
-    padding: 10px;
-    border: none;
-    color: #888; /* koyu gri renk */
-    background-color: #ccc; /* gri renk */
-    border-radius: 10px;
-    font-size: 17px;
+.part2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: none;
 }
-.progress-bar {
+.part2 .button1{
+    margin-top: 15px;
+    background-color: #FCC22D;
+    border-radius: 30px;
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    font-size: 20px;
+}
+.container2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    display: none;
+}
+.container2 .card1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.card1-part1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 50px;
+    display: none;
+}
+.collect{
+ background-color: #FF443A;
+ border-radius: 30px;
+ padding: 5px;
+ font-weight: bold;  
+ border: none;
+}
+.refuel{
+ background-color: #FFE816;
+ border-radius: 30px;
+ padding: 5px;
+ font-weight: bold;  
+ border: none;
+}
+.upgrade{
+    border-radius:30px;
+    font-weight: bold;
+    padding:10px;
+    background-color: #16513E;
+    font-size: 10px;
+    border: none;
+}
+.container3{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 100px;
+    margin-left: 150px;
+}
+.container3 .card2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 100px;
+    display: none;
+}
+.matic{
+    color: black;
+    background-color: white;
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 24px;
+    margin-top: 10px;
+    border: none;
+}
+ .progress-bar {
+    width: 500px;
+    background-color: #f3f3f3;
+    border-radius: 30px;
+}
+.progress {
+    height: 35px;
+    background-color: #A8C488;
+    border-radius: 30px;
+    width: 60%;
+} 
+.time-bar{
     width: 50%;
     background-color: #f3f3f3;
-    border-radius: 10px;
+    border-radius: 30px;
 }
+.time{
+    height: 15px;
+    background-color: #A8C488;
+    border-radius: 30px;
+    width: 60%;
+}
+.progress-bar-vertical {
+    height: 200px;  
+    width: 20px;
+    background-color: #f3f3f3;
+    overflow: hidden;
+  }
   
-.progress {
-    height: 20px;
-    background-color: #4caf50;
-    border-radius: 10px;
+  .progress-bar-fill {
+    background-color: #FBD116;
+    height: 70%; 
     width: 100%;
-}
+  }
+  .popup {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 1500px;
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .popup-content{
+    height: 500px;
+    width: 500px;
+    background-color:white;
+    padding: 40px;
+    border-radius: 5px;
+    position: relative;
+  }
+  .popup-card{
+    display: flex;
+    flex-direction: column;
+  }
+  .popup-card input{
+    outline: none;
+    margin: 15px 0px;
+   border: 1px solid gainsboro;
+   padding: 10px;
+  }
+  .popup-card label{
+    font-style: italic;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .button2{
+    background-color: orangered;
+    padding: 10px;
+    border: none;
+    color: white;
+    border-radius: 20px;
+    font-size: 20px;
+    transition: all 0.5s;
+    margin-right: 10px;
+  }
+  .button2:hover{
+    background-color: white;
+    color: orangered;
+    border: 1px solid orangered;
+  }
