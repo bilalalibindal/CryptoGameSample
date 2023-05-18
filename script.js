@@ -156,6 +156,7 @@ class DApp {
         await this.defineFromContract();
         this.checkStation();
         this.basicUpdate();
+        await this.loadPumps();
     }
     async checkStation() { // Check is user has station.
         if (!this.isStationOwner) {
@@ -176,6 +177,28 @@ class DApp {
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
     }
     async loadPumps() {
+        for(let index = 0; index<this.userPumpsLength; index++){
+            let pump = await this.contract.methods.userPumps(this.userAddress, index).call();
+            let pumpSection = document.getElementById(`pump-section-${index}`);
+            let pumpImg = document.getElementById(`pump-img-${index}`);
+            let pumpFuelCapacity = document.getElementById(`pump-fuel-capacity-${index}`);
+            let pumpCollectButton = document.getElementById(`collect-button-${index}`);
+            let pumpRefuelButton = document.getElementById(`refuel-button-${index}`);
+            let pumpUpgradeButton = document.getElementById(`upgrade-button-${index}`);
+            
+            if (pump.level >= 3){
+                pumpUpgradeButton.style.display = "none";
+            }
+            pumpSection.style.display = "block";
+            pumpSection.style.display = "flex";
+            pumpImg.src = `./images/pump${pump.level}.svg`;
+            pumpFuelCapacity.innerText = pump.fuelCapacity;
+            console.log(pump.fuelCapacity * this.fuelPrice);
+            pumpCollectButton.innerText = `COLLECT\n${pump.fuelCapacity * this.fuelPrice} PWL`;
+            pumpRefuelButton.innerText = `REFUEL\n${pump.fuelCapacity * this.fuelPrice * 0.05} PWL`;
+            pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei
+                (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
+        }
 
     }
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
