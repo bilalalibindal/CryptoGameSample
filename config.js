@@ -648,4 +648,4 @@ var contractAbi = [
 		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0xa9fA5c7892385517Ee8C71d5f43dAD8B4f9EEDd0"; // Deneme sözleşmesinin adresi
+var contractAddress = "0x74467de5Ea9DFB52D718de1B23C34B9F161bA093"; // Deneme sözleşmesinin adresi

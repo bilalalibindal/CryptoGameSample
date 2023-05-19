@@ -75,7 +75,7 @@ class DApp {
                 // Get user's metamask address.
                 const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
                 this.userAddress = accounts[0]; // bring and define user's first address from metamask.
-                this.buildPage();
+                await this.buildPage();
                 console.log(this.userAddress);
             } catch (error) {
                 console.error("Access denied, please try again.", error);
@@ -90,21 +90,22 @@ class DApp {
         return await this.contract.methods.getUpgradeCost(level).call();
     }
     async defineFromContract() {
-        // Define and get userPumpsLength from smart contract
-        this.userPumpsLength = await this.contract.methods.getUserPumpsLength(this.userAddress).call();
         // Define users mapping and variables from smart contract
         this.users = await this.contract.methods.users(this.userAddress).call();
         this.isStationOwner = this.users.isStationOwner;
         this.isRefineryOwner = this.users.isRefineryOwner;
         this.lastDrillOilTime = this.users.lastDrillOilTime;
-        this.maxPumps = this.maxPumps;
+        this.maxPumps = this.users.maxPumps;
         this.tokenBalance = this.web3.utils.fromWei(this.users.tokenBalance);
         this.oilBalance = this.users.oilBalance;
+        // Define and get userPumpsLength from smart contract
+        this.userPumpsLength = await this.contract.methods.getUserPumpsLength(this.userAddress).call();
         // Define total mined and pull value from smart contract
         this.totalMined = await this.contract.methods.totalMined().call({ from: this.userAddress })
         // Get value of current fuel price
         this.fuelPrice = this.web3.utils.fromWei(await this.contract.methods.getCurrentFuelPrice().call());
-        this.web3.eth.getBalance(contractAddress, (err, wei) => { 
+        console.log(this.web3.utils.fromWei(this.totalMined));
+        await this.web3.eth.getBalance(contractAddress, (err, wei) => { 
             this.maticPoolAmount = this.web3.utils.fromWei(wei, 'ether'); 
         });
     }
@@ -134,48 +135,56 @@ class DApp {
     async createPump() {
         const result = await this.contract.methods.createPump().send({ from: this.userAddress });
         console.log("Pump created successfully:", result);
-        this.basicUpdate();
+        await this.updateTopMenu();
         this.buildPumps();
     }
     async collectPump(pumpIndex) {
         await this.contract.methods.collect(pumpIndex).send({ from: this.userAddress });
-        this.basicUpdate();
+        await this.updateTopMenu();
         this.buildPump(pumpIndex);
     }
     async refuelPump(pumpIndex) {
         await this.contract.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
-        this.basicUpdate();
+        await this.updateTopMenu();
         this.buildPump(pumpIndex);
     }
     async upgradePump(pumpIndex) {
         await this.contract.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
-        this.basicUpdate();
+        await this.updateTopMenu();
         this.buildPump(pumpIndex);
     }
     /* ---------------------------------------------- UPDATE METHODS ---------------------------------------------- */
     async buildPage() {
-        await this.defineFromContract(); // run set variables function.
-        this.defineFromHTML();
-        this.checkStation();
-        this.updateUI(); // Update page and bring user's variables from smart contract
-        this.buildPumps();
+        // run set variables function.
+        await this.defineFromHTML();
+        this.loadingIcon.style.display = 'block';
+        await this.defineFromContract();
+        await this.checkStation();
+        await this.updateTopMenu();
+        await this.buildPumps();
         this.setupEventListeners();
+        this.loadingIcon.style.display = 'none';
     }
     async buildPumps() {
-        this.updateAllPump();
-        this.updateAllPumpFeatures();
-        this.updateAllPumpCooldown();
+        this.loadingIcon.style.display = 'block';
+        await this.updateAllPumpCooldown();
+        await this.updateAllPumpFeatures();
+        await this.updateAllPump();
+        this.loadingIcon.style.display = 'none';
     }
     async buildPump(pumpIndex) {
-        this.updatePump(pumpIndex);
-        this.updatePumpFeatures(pumpIndex);
-        this.updatePumpCooldown(pumpIndex);
+        this.loadingIcon.style.display = 'block';
+        await this.updatePumpCooldown(pumpIndex);
+        await this.updatePumpFeatures(pumpIndex);
+        await this.updatePump(pumpIndex);
+        this.loadingIcon.style.display = 'none';
     }
     async updateUI() {
         await this.defineFromContract();
-        this.basicUpdate();
+        this.updateTopMenu();
     }
     async checkStation() { // Check is user has station.
+        this.loadingIcon.style.display = 'block';
         if (!this.isStationOwner) {
             this.displayPart2();
             this.hideContainer();
@@ -187,27 +196,30 @@ class DApp {
             this.displayContainer();
             this.displayContainer2();
             this.displayContainer3();
-        } 
-    }
-    async basicUpdate() {
+        }
+        this.loadingIcon.style.display = 'none'; 
+    }   
+    async updateTopMenu() {
         await this.defineFromContract();
+        this.loadingIcon.style.display = 'block';
         this.depositBalance_HTML.innerText = this.tokenBalance;
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
         this.maticPool_HTML.innerText = this.maticPoolAmount;
+        this.loadingIcon.style.display = 'none'; 
     }
     async updateAllPump(){
         for(let index = 0; index<this.userPumpsLength; index++){
-            this.updatePump(index);
+            await this.updatePump(index);
         }
     }
     async updateAllPumpFeatures(){
         for(let index = 0; index<this.userPumpsLength; index++){
-            this.updatePumpFeatures(index);
+            await this.updatePumpFeatures(index);
         }
     }
     async updateAllPumpCooldown(){
         for(let index = 0; index<this.userPumpsLength; index++){
-            this.updatePumpCooldown(index);
+            await this.updatePumpCooldown(index);
         }
     }
     async updatePump(pumpIndex) {
@@ -216,7 +228,7 @@ class DApp {
         let pumpImg = document.getElementById(`pump-img-${pumpIndex}`);
         pumpSection.style.display = "flex";
         pumpImg.src = `./images/pump${pump.level}.svg`;
-        
+        console.log("1");
     }
     async updatePumpFeatures(pumpIndex) {
         let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
@@ -240,57 +252,63 @@ class DApp {
         pumpRefuelButton.innerText = `REFUEL\n${pump.fuelCapacity * this.fuelPrice * 0.05} PWL`;
         pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei
             (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
-        if (pumpIsWorking && this.pumpCountDowns[pumpIndex]>0) {
+        if (Boolean(pumpIsWorking) && this.pumpCountDowns[pumpIndex]>0) {
             pumpCollectButton.disabled = true; 
             //pumpCollectButton.className = "disabled"; 
             pumpRefuelButton.disabled = true; 
             //pumpRefuelButton.className = "disabled"; 
             pumpUpgradeButton.disabled = true; 
             //pumpUpgradeButton.className = "disabled"; 
-        } else if (pumpIsWorking && this.pumpCountDowns[pumpIndex] <= 0) {
-            pumpCollectButton.disabled = false; 
-            //pumpCollectButton.className = "enabled";
-            pumpRefuelButton.disabled = true; 
-            //pumpRefuelButton.className = "disabled"; 
-            pumpUpgradeButton.disabled = true; 
-            //pumpUpgradeButton.className = "disabled"; 
-        } else if (!pumpIsWorking && pump.fuel == 0) {
+        } else if (!Boolean(pumpIsWorking) && pump.fuel == 0) {
             pumpCollectButton.disabled = true; 
             //pumpCollectButton.className = "disabled"; 
             pumpRefuelButton.disabled = false;
             //pumpRefuelButton.className = "enabled";
             pumpUpgradeButton.disabled = false; 
             //pumpUpgradeButton.className = "enabled";
+        } else if (this.pumpCountDowns[pumpIndex] <= 0 && Boolean(pumpIsWorking)) {
+            pumpCollectButton.disabled = false; 
+            //pumpCollectButton.className = "enabled";
+            pumpRefuelButton.disabled = true; 
+            //pumpRefuelButton.className = "disabled"; 
+            pumpUpgradeButton.disabled = true; 
+            //pumpUpgradeButton.className = "disabled"; 
         }
+        console.log("2");
     }
     async updatePumpCooldown(pumpIndex) {
         let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
         this.pumpCountDowns[pumpIndex] = await this.contract.methods
             .getRemainingCooldown(pumpIndex)
             .call({ from: this.userAddress });
-        let timeElement = document.getElementById(`pump-time-${pumpIndex}`);
-        let timeBarElement = document.getElementById(`pump-progress-${pumpIndex}`);
-        // Eğer önceden bir setInterval varsa onu temizle
-        if (this.intervalIDs[pumpIndex]) {
-            clearInterval(this.intervalIDs[pumpIndex]);
-        }
-        // Yeni bir setInterval oluştur ve ID'sini sakla
-        this.intervalIDs[pumpIndex] = setInterval(() => {
-            this.pumpCountDowns[pumpIndex] -= 1;
-            if (this.pumpCountDowns[pumpIndex] <= 0) {
+        if(this.pumpCountDowns[pumpIndex] > 0){
+            this.pumpCountDowns[pumpIndex] = parseInt(this.pumpCountDowns[pumpIndex]) + parseInt(10);
+            let timeElement = document.getElementById(`pump-time-${pumpIndex}`);
+            let timeBarElement = document.getElementById(`pump-progress-${pumpIndex}`);
+            // Eğer önceden bir setInterval varsa onu temizle
+            if (this.intervalIDs[pumpIndex]) {
                 clearInterval(this.intervalIDs[pumpIndex]);
-                timeElement.innerText = `Ready`;
-                timeBarElement.style.width = '0%';
-                this.buildPump(pumpIndex);
-                return;
             }
-            timeElement.innerText = `Time: ${this.pumpCountDowns[pumpIndex]}`;
-            let percentRemaining = (this.pumpCountDowns[pumpIndex] / pump.refuelTime) * 100;
-            timeBarElement.style.width = `${percentRemaining}%`;
-        },1000);
+            // Yeni bir setInterval oluştur ve ID'sini sakla
+            this.intervalIDs[pumpIndex] = setInterval(() => {
+                this.pumpCountDowns[pumpIndex] -= 1;
+                if (this.pumpCountDowns[pumpIndex] <= 0) {
+                    clearInterval(this.intervalIDs[pumpIndex]);
+                    timeElement.innerText = `READY`;
+                    timeBarElement.style.width = '0%';
+                    this.buildPump(pumpIndex);
+                    return;
+                }
+                timeElement.innerText = `Time: ${this.pumpCountDowns[pumpIndex]}`;
+                let percentRemaining = (this.pumpCountDowns[pumpIndex] / pump.refuelTime) * 100;
+                timeBarElement.style.width = `${percentRemaining}%`;
+            },1000);
+        }
+        console.log("3");  
     }
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
-    defineFromHTML() { // Define html elements by id
+    async defineFromHTML() { // Define html elements by id
+        this.loadingIcon = document.getElementById('loading-icon');
         this.depositBalance_HTML = document.getElementById("deposit-balance");
         this.fuelPrice_HTML = document.getElementById("current-fuel-price");
         this.maticPool_HTML = document.getElementById("matic-pool");
@@ -364,8 +382,8 @@ class DApp {
             });
     }
 }
-
-const dApp = new DApp();
-
-// Set up event listeners
-dApp.initialize();
+window.onload = async function() {
+    let dApp = new DApp();
+    await dApp.initialize();
+    // Diğer başlangıç kodlarınız
+}
