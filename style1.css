@@ -4,7 +4,10 @@
     box-sizing: border-box;
 }
 body{
-    background-color: #808080;
+        background-image: url(./images/Leonardo_Diffusion_Gas_station_near_the_road_with_retro_game_a_2.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100%;
 }
 .container{
     display: flex;
@@ -148,17 +151,21 @@ body{
   .popup {
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
-    height: 1500px;
+    height: 1000px;
     position: absolute;
     top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    display: none;
   }
   .popup-content{
     height: 500px;
     width: 500px;
-    background-color:white;
+    background-image: url(./images/Leonardo_Diffusion_Gas_station_near_the_road_with_retro_game_a_2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+
     padding: 40px;
     border-radius: 5px;
     position: relative;
@@ -177,6 +184,20 @@ body{
     font-style: italic;
     font-weight: bold;
     font-size: 20px;
+    color: white;
+  }
+  .close {
+    position: absolute;
+    top: -24px;
+    right: -10px;
+    color: #bbb;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    
+  }
+  .close:hover{
+    cursor: pointer;
   }
   .button2{
     background-color: orangered;

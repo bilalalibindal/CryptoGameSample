@@ -20,10 +20,11 @@
         
       </div>
       <div class="card">
-        <h2 style="margin: 10px 0px;text-align: center;font-size:25px;">TOTAL MINED</h2>
-        <div id="total-mined-token-bar" class="progress-bar">
-          <div id="pump0-progress" class="progress"></div>
+        <h2 id="total-mined-amount" style="margin: 10px 0px;text-align: center;font-size:25px;">TOTAL MINED</h2>
+        <div style="text-align: center; font-size: 25px;" class="progress-bar">
+          <div id="total-mined-token-bar" class="progress" ></div>
         </div>
+        <p id="total-mined" style="text-align: center; font-size: 25px; margin: 10px 0px;"></p>
         <div class="card-part">
           <img src="./images/fuel.png" width="50" alt="">
           <p id="current-fuel-price" style="font-size: 30px;font-weight: bold;">
@@ -38,7 +39,7 @@
       </div>
       <div class="card">
         <div class="card-part1">
-          <img src="./images/bank.png" alt="">
+          <img src="./images/bank.png" id="click" alt="">
           <p style="margin-bottom: 20px;margin-top: 10px;" class="size">BANK</p>
         </div>
         <div class="card-part1">
@@ -165,29 +166,45 @@
       <button class="matic">1 MATIC</button>
     </div>
     </div>
-    <div class="popup" style="display: none;"> <!--buraya dokanma sikerim adasdasdasd-->
+    <div class="popup" > 
       <div class="popup-content">
         <div class="popup-card">
-          
+          <span class="close">&times;</span>
           <label style="text-align: left;" for="">DEPOSİT</label>
-          <input type="number">
+          <input id="deposit-amount" type="number" min="0">
           <div style="margin-bottom: 20px;">
-            <button class="button2">Deposit</button>
+            <button id="deposit-button" class="button2">Deposit</button>
+            <button id="max-deposit-button" class="button2">Max</button>
           </div>
           
           <label style="text-align: left;" for="">WİTHDRAW</label>
-          <input type="number">
-          <label style="text-align: left;" for="">SELL OIL</label>
-          <input type="number">
+          <input id="withdraw-amount" type="number" min="0">
           <div>
-          <button class="button2">Withdraw</button>
-          <button class="button2">Sell Oil</button>
+             <button id="withdraw-button" style="margin-bottom: 20px;" class="button2">Withdraw</button>
+             <button id="max-withdraw-button" class="button2">Max</button>
+          </div>
+         
+         
+          <label style="text-align: left;" for="">SELL OIL</label>
+          <input id="sell-oil-amount" type="number" min="0">
+          <div>
+          <button id="sell-oil-button" class="button2">Sell Oil</button>
+          <button id="max-sell-oil-button" class="button2">Max</button>
           </div>
           
         </div>
         
       </div>
     </div>
+    <script>
+      let popup=document.querySelector(".popup")
+      let img=document.getElementById("click").addEventListener("click",function(){
+        popup.style.display="flex"
+      })
+      document.querySelector(".close").addEventListener("click",function(){
+        popup.style.display="none"
+      })
+    </script>
       <!-- <div class="container">
         <div class="card">
           <button id="connectMetamask" class="button">Connect Metamask</button>

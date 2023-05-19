@@ -328,6 +328,19 @@ var contractAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "kisi",
+				"type": "address"
+			}
+		],
+		"name": "degis",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
@@ -354,6 +367,19 @@ var contractAbi = [
 			}
 		],
 		"name": "drillOil",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseTotalMined",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -505,6 +531,25 @@ var contractAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "miningMilestones",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "pwlToken",
 		"outputs": [
@@ -512,25 +557,6 @@ var contractAbi = [
 				"internalType": "contract IERC20",
 				"name": "",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "rewards",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",

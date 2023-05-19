@@ -12,6 +12,13 @@ class DApp {
     }
     setupEventListeners() {
         this.buyStationButton_HTML.addEventListener('click', () => this.buyStation());
+        // Bank Buttons
+        document.getElementById('deposit-button').addEventListener('click', () => this.deposit());
+        document.getElementById('withdraw-button').addEventListener('click', () => this.withdraw());
+        document.getElementById('sell-oil-button').addEventListener('click', () => this.sellOil());
+        document.getElementById('max-deposit-button').addEventListener('click', () => this.max('deposit'));
+        document.getElementById('max-withdraw-button').addEventListener('click', () => this.max('withdraw'));
+        document.getElementById('max-sell-oil-button').addEventListener('click', () => this.max('sell-oil'));
         // Pump Buttons
         document.getElementById('buy-pump-button').addEventListener('click', () => this.createPump());
         document.getElementById('collect-button-0').addEventListener('click', () => this.collectPump(0));
@@ -101,10 +108,10 @@ class DApp {
         // Define and get userPumpsLength from smart contract
         this.userPumpsLength = await this.contract.methods.getUserPumpsLength(this.userAddress).call();
         // Define total mined and pull value from smart contract
-        this.totalMined = await this.contract.methods.totalMined().call({ from: this.userAddress })
+        this.totalMined = this.web3.utils.fromWei(await this.contract.methods.totalMined()
+        .call({ from: this.userAddress }))
         // Get value of current fuel price
         this.fuelPrice = this.web3.utils.fromWei(await this.contract.methods.getCurrentFuelPrice().call());
-        console.log(this.web3.utils.fromWei(this.totalMined));
         await this.web3.eth.getBalance(contractAddress, (err, wei) => { 
             this.maticPoolAmount = this.web3.utils.fromWei(wei, 'ether'); 
         });
@@ -131,6 +138,51 @@ class DApp {
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
+    }
+    async deposit() {
+        try {
+            let depositAmount = document.getElementById("deposit-amount").value;
+            let tokenAmount = this.web3.utils.toWei(depositAmount.toString());
+            await this.tokenContract.methods.approve(contractAddress,tokenAmount).send({ from: this.userAddress });
+            await this.contract.methods.deposit(tokenAmount).send({ from: this.userAddress });
+            await this.updateTopMenu();
+            }
+        catch (error) {
+            console.error("Deposit failed.", error);
+        }
+    }
+    async withdraw() {
+        try {
+            let withdrawAmount = document.getElementById("withdraw-amount").value;
+            let tokenAmount = this.web3.utils.toWei(withdrawAmount.toString());
+            await this.contract.methods.withdraw(tokenAmount).send({ from: this.userAddress });
+            await this.updateTopMenu();
+        } catch (error) {
+            console.error("Withdraw failed.", error);
+        }
+    }
+    async sellOil() {
+        try {
+            let oilAmount = document.getElementById("sell-oil-amount").value;
+            await this.contract.methods.sellOil(oilAmount).send({ from: this.userAddress });
+            await this.updateTopMenu();
+        } catch (error) {
+            console.error("Sell Oil Failed.", error);
+        }
+    }
+    async max(process) {
+        let amount = document.getElementById(`${process}-amount`)
+        if (process == 'deposit') {
+            amount.max = this.web3.utils.fromWei(await this.tokenContract.methods.balanceOf(this.userAddress).call());
+            amount.value = amount.max;
+        } else if (process == 'withdraw') {
+            amount.max = this.tokenBalance;
+            amount.value = amount.max;
+        } else if (process == 'sell-oil') {
+            amount.max = this.oilBalance;
+            amount.value = amount.max;
+        }
+
     }
     async createPump() {
         const result = await this.contract.methods.createPump().send({ from: this.userAddress });
@@ -202,6 +254,7 @@ class DApp {
     async updateTopMenu() {
         await this.defineFromContract();
         this.loadingIcon.style.display = 'block';
+        await this.updateTotalMinedBar();
         this.depositBalance_HTML.innerText = this.tokenBalance;
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
         this.maticPool_HTML.innerText = this.maticPoolAmount;
@@ -306,9 +359,36 @@ class DApp {
         }
         console.log("3");  
     }
+    async updateTotalMinedBar() {
+        this.totalMinedBar_HTML.style.color = 'black';
+        this.totalMinedElement_HTML.innerText = `Mined PWL: ${this.totalMined}`;
+        let mileStone_1 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(0).call()));
+        if (this.totalMined < mileStone_1) {
+            this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_1) * 100}%`;
+            if (this.totalMined - mileStone_1 <= 10000) {
+                this.totalMinedBar_HTML.style.color = 'red';
+                this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_1}`;
+            }
+            
+        }
+        else {
+            let mileStone_2 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(1)
+            .call({from: this.userAddress})));
+            this.MileStoneElement_HTML.innerText = `Mile Stone: ${mileStone_2}`;
+            this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_2) * 100}%`;
+            if (this.totalMined - mileStone_1 <= 50000) {
+                this.totalMinedBar_HTML.style.color = 'red';
+                this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_2}`;
+            }
+
+        }
+    }
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
     async defineFromHTML() { // Define html elements by id
         this.loadingIcon = document.getElementById('loading-icon');
+        this.totalMinedBar_HTML = document.getElementById('total-mined-token-bar');
+        this.totalMinedElement_HTML = document.getElementById('total-mined');
+        this.MileStoneElement_HTML = document.getElementById('total-mined-amount');
         this.depositBalance_HTML = document.getElementById("deposit-balance");
         this.fuelPrice_HTML = document.getElementById("current-fuel-price");
         this.maticPool_HTML = document.getElementById("matic-pool");
