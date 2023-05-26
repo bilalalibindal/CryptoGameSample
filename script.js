@@ -160,8 +160,6 @@ class DApp {
     }
     async withdraw() {
         try {
-            let withdrawAmount = document.getElementById("withdraw-amount").value;
-            document.getElementById("withdraw-amount").value = withdrawAmount - withdrawAmount * 0.05;
             let tokenAmount = this.web3.utils.toWei(withdrawAmount.toString());
             await this.contract.methods.withdraw(tokenAmount).send({ from: this.userAddress });
             await this.updateTopMenu();
@@ -193,7 +191,7 @@ class DApp {
             amount.value = amount.max;
         } else if (process == 'withdraw') {
             amount.max = this.tokenBalance;
-            amount.value = amount.max - amount.max * 0.05;
+            //amount.value = amount.max - amount.max * 0.05;
         } else if (process == 'sell-oil') {
             amount.max = this.oilBalance;
             amount.value = amount.max;
