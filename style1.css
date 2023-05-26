@@ -9,6 +9,12 @@ body{
         background-size: cover;
         height: 100%;
 }
+.part1{
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
 .container{
     display: flex;
     justify-content: space-between;
@@ -69,7 +75,7 @@ body{
     display: none;
 }
 .collect{
- background-color: #FF443A;
+ background-color: #CE0202;
  border-radius: 30px;
  padding: 5px;
  font-weight: bold;  
@@ -92,7 +98,7 @@ body{
 }
 .container3{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
     margin-top: 100px;
     margin-left: 150px;
@@ -160,7 +166,7 @@ body{
     display: none;
   }
   .popup-content{
-    height: 500px;
+    height: 700px;
     width: 500px;
     background-image: url(./images/Leonardo_Diffusion_Gas_station_near_the_road_with_retro_game_a_2.png);
     background-repeat: no-repeat;
@@ -199,20 +205,136 @@ body{
   .close:hover{
     cursor: pointer;
   }
-  .button2{
-    background-color: orangered;
-    padding: 10px;
-    border: none;
-    color: white;
-    border-radius: 20px;
-    font-size: 20px;
-    transition: all 0.5s;
-    margin-right: 10px;
+  #click:hover{
+    cursor: pointer;
   }
-  .button2:hover{
-    background-color: white;
-    color: orangered;
-    border: 1px solid orangered;
+  .matic-part{
+    display: none;
+    flex-direction: column;
+    width: 20%;
+    padding: 30px;
+  }
+  .refinery-part{
+    display: none;
+    flex-direction: column;
+    margin-top: 60px;
+    padding-bottom: 30px;
+  }
+  .button-style{
+    margin-right: 30px;
+    height: 50%;
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .button-style:active{
+    background-color: #4CAF50;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .style{
+    margin-right: 10px;
+    display: inline-block;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: white;
+    background-color:#CE0202;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .style:active{
+    background-color: #CE0202;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .style1{
+    display: inline-block;
+    padding: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: white;
+    background-color:#F09A21;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .style1:active{
+    background-color: #F09A21;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .style2{
+    display: inline-block;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: white;
+    background-color:#16513E;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .style2:active{
+    background-color: #16513E;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .style3{
+    display: inline-block;
+    padding: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #6f706b;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .style3:active{
+    background-color: #6f706b;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .button2{
+    margin-right: 10px;
+    display: inline-block;
+    padding: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color:orangered;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  .button2:active{
+    background-color: orangered;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
   }
   .loader {
     border: 16px solid #f3f3f3;
@@ -230,7 +352,122 @@ body{
     top: 50%;
     transform: translate(-50%, -50%);
 }
+.collect-disabled{
+  opacity: 0.7;
+  font-weight: bold;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#CE0202;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+ }
+ .upgrade-disabled{
+  opacity: 0.7;
+  font-weight: bold;
+  font-size: 10px;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: #16513E;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+ }
+ .refuel-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#F09A21;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
 
+ .buy-refinery-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
+ .buy-pump-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
+ .buy-extra-place-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
+ .style3-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  font-size: 24px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#6f706b;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
+ .button-style-disabled{
+  opacity: 0.7;
+  display: inline-block;
+  padding: 10px;
+  font-size: 24px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color:#4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  font-weight: bold;
+ }
 /* Safari */
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }

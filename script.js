@@ -20,22 +20,29 @@ class DApp {
         document.getElementById('max-withdraw-button').addEventListener('click', () => this.max('withdraw'));
         document.getElementById('max-sell-oil-button').addEventListener('click', () => this.max('sell-oil'));
         // Pump Buttons
-        document.getElementById('buy-pump-button').addEventListener('click', () => this.createPump());
-        document.getElementById('collect-button-0').addEventListener('click', () => this.collectPump(0));
-        document.getElementById('refuel-button-0').addEventListener('click', () => this.refuelPump(0));
-        document.getElementById('upgrade-button-0').addEventListener('click', () => this.upgradePump(0));
-        document.getElementById('collect-button-1').addEventListener('click', () => this.collectPump(1));
-        document.getElementById('refuel-button-1').addEventListener('click', () => this.refuelPump(1));
-        document.getElementById('upgrade-button-1').addEventListener('click', () => this.upgradePump(1));
-        document.getElementById('collect-button-2').addEventListener('click', () => this.collectPump(2));
-        document.getElementById('refuel-button-2').addEventListener('click', () => this.refuelPump(2));
-        document.getElementById('upgrade-button-2').addEventListener('click', () => this.upgradePump(2));
-        /*document.getElementById('collect-button-3').addEventListener('click', () => this.collectPump(3));
-        document.getElementById('refuel-button-3').addEventListener('click', () => this.refuelPump(3));
-        document.getElementById('upgrade-button-3').addEventListener('click', () => this.upgradePump(3));
-        document.getElementById('collect-button-4').addEventListener('click', () => this.collectPump(4));
-        document.getElementById('refuel-button-4').addEventListener('click', () => this.refuelPump(4));
-        document.getElementById('upgrade-button-4').addEventListener('click', () => this.upgradePump(4));*/
+        this.buyPumpButton_HTML.addEventListener('click', () => this.createPump());
+        this.collectPumpButton_0_HTML.addEventListener('click', () => this.collectPump(0));
+        this.refuelPumpButton_0_HTML.addEventListener('click', () => this.refuelPump(0));
+        this.upgradeButton_0_HTML.addEventListener('click', () => this.upgradePump(0));
+        this.collectPumpButton_1_HTML.addEventListener('click', () => this.collectPump(1));
+        this.refuelPumpButton_1_HTML.addEventListener('click', () => this.refuelPump(1));
+        this.upgradeButton_1_HTML.addEventListener('click', () => this.upgradePump(1));
+        this.collectPumpButton_2_HTML.addEventListener('click', () => this.collectPump(2));
+        this.refuelPumpButton_2_HTML.addEventListener('click', () => this.refuelPump(2));
+        this.upgradeButton_2_HTML.addEventListener('click', () => this.upgradePump(2));
+        this.collectPumpButton_3_HTML.addEventListener('click', () => this.collectPump(3));
+        this.refuelPumpButton_3_HTML.addEventListener('click', () => this.refuelPump(3));
+        this.upgradeButton_3_HTML.addEventListener('click', () => this.upgradePump(3));
+        this.collectPumpButton_4_HTML.addEventListener('click', () => this.collectPump(4));
+        this.refuelPumpButton_4_HTML.addEventListener('click', () => this.refuelPump(4));
+        this.upgradeButton_4_HTML.addEventListener('click', () => this.upgradePump(4));
+        // Extra Place Button
+        this.buyExtraPlaceButton_HTML.addEventListener('click', () => this.buyExtraPlace());
+        // Refinery Buttons
+        this.buyRefineryButton_HTML.addEventListener('click', () => this.buyRefinery());
+        this.drillOilButton_0_HTML.addEventListener('click', () => this.drillOil(3));
+        this.drillOilButton_1_HTML.addEventListener('click', () => this.drillOil(5));
+        this.drillOilButton_2_HTML.addEventListener('click', () => this.drillOil(10));
     }
     async getConnectedNetwork() {
         const networkId = await window.ethereum.request({ method: 'eth_chainId' });
@@ -123,7 +130,7 @@ class DApp {
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether")
             })
-            this.buildPage();
+            this.buildPage(); // Update method
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
@@ -134,7 +141,7 @@ class DApp {
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether")
             })
-            // Update method here
+            this.buildPage(); // Update method
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
@@ -154,11 +161,20 @@ class DApp {
     async withdraw() {
         try {
             let withdrawAmount = document.getElementById("withdraw-amount").value;
+            document.getElementById("withdraw-amount").value = withdrawAmount - withdrawAmount * 0.05;
             let tokenAmount = this.web3.utils.toWei(withdrawAmount.toString());
             await this.contract.methods.withdraw(tokenAmount).send({ from: this.userAddress });
             await this.updateTopMenu();
         } catch (error) {
             console.error("Withdraw failed.", error);
+        }
+    }
+    async drillOil(pwlAmount) {
+        try {
+            await this.contract.methods.drillOil(this.web3.utils.toWei(`${pwlAmount}`, 'ether')).send({ from: this.userAddress });
+            await this.updateTopMenu();
+        } catch (error) {
+            console.error("Drill Oil Failed.", error);
         }
     }
     async sellOil() {
@@ -177,7 +193,7 @@ class DApp {
             amount.value = amount.max;
         } else if (process == 'withdraw') {
             amount.max = this.tokenBalance;
-            amount.value = amount.max;
+            amount.value = amount.max - amount.max * 0.05;
         } else if (process == 'sell-oil') {
             amount.max = this.oilBalance;
             amount.value = amount.max;
@@ -189,6 +205,12 @@ class DApp {
         console.log("Pump created successfully:", result);
         await this.updateTopMenu();
         this.buildPumps();
+    }
+    async buyExtraPlace() {
+        await this.contract.methods.buyExtraPlace().send({ 
+            from: this.userAddress,
+            value: this.web3.utils.toWei("0.0", "ether") });
+        this.updateUI();
     }
     async collectPump(pumpIndex) {
         await this.contract.methods.collect(pumpIndex).send({ from: this.userAddress });
@@ -212,6 +234,8 @@ class DApp {
         this.loadingIcon.style.display = 'block';
         await this.defineFromContract();
         await this.checkStation();
+        await this.checkRefinery();
+        await this.checkRefinery();
         await this.updateTopMenu();
         await this.buildPumps();
         this.setupEventListeners();
@@ -219,6 +243,7 @@ class DApp {
     }
     async buildPumps() {
         this.loadingIcon.style.display = 'block';
+        this.buyPumpButton_HTML.innerText = `BUY\n${this.web3.utils.fromWei(await this.getUpgradeCosts(1))} PWL`;
         await this.updateAllPumpCooldown();
         await this.updateAllPumpFeatures();
         await this.updateAllPump();
@@ -242,22 +267,55 @@ class DApp {
             this.hideContainer();
             this.hideContainer2();
             this.hideContainer3();
+            this.hidePurchasePart();
+            this.hideRefineryPart();
         }                                // Visibility settings of images and properties
         else {
             this.hidePart2();
             this.displayContainer();
             this.displayContainer2();
             this.displayContainer3();
+            this.hidePurchasePart();
+            this.displayPurchasePart();
+            this.displayRefineryPart();
         }
         this.loadingIcon.style.display = 'none'; 
+    }
+    async checkRefinery() {
+        this.loadingIcon.style.display = 'block';
+        if(!this.isRefineryOwner) {
+            this.buyRefineryButton_HTML.disabled = false;
+            this.buyRefineryButton_HTML.className = "button-style"
+            this.drillOilButton_0_HTML.disabled = true;
+            this.drillOilButton_0_HTML.className = "style3-disabled";
+            this.drillOilButton_1_HTML.disabled = true;
+            this.drillOilButton_1_HTML.className = "style3-disabled";
+            this.drillOilButton_2_HTML.disabled = true;
+            this.drillOilButton_2_HTML.className = "style3-disabled";
+        }
+        else {
+            this.buyRefineryButton_HTML.disabled = true;
+            this.buyRefineryButton_HTML.className = "button-style-disabled"
+            this.drillOilButton_0_HTML.disabled = false;
+            this.drillOilButton_0_HTML.className = "style3";
+            this.drillOilButton_1_HTML.disabled = false;
+            this.drillOilButton_1_HTML.className = "style3";
+            this.drillOilButton_2_HTML.disabled = false;
+            this.drillOilButton_2_HTML.className = "style3";
+        }
+        this.loadingIcon.style.display = 'none';
     }   
     async updateTopMenu() {
         await this.defineFromContract();
         this.loadingIcon.style.display = 'block';
         await this.updateTotalMinedBar();
         this.depositBalance_HTML.innerText = this.tokenBalance;
+        this.oilBalance_HTML.innerText = this.oilBalance;
+        this.bankOilBalance_HTML.innerText = this.oilBalance;
+        this.bankTokenBalance_HTML.innerText = this.tokenBalance;
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
         this.maticPool_HTML.innerText = this.maticPoolAmount;
+        this.pumpTable_HTML.innerText = `Pumps: ${this.userPumpsLength}\nMax: ${this.maxPumps}`;
         this.loadingIcon.style.display = 'none'; 
     }
     async updateAllPump(){
@@ -307,25 +365,25 @@ class DApp {
             (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
         if (Boolean(pumpIsWorking) && this.pumpCountDowns[pumpIndex]>0) {
             pumpCollectButton.disabled = true; 
-            //pumpCollectButton.className = "disabled"; 
+            pumpCollectButton.className = "collect-disabled"; 
             pumpRefuelButton.disabled = true; 
-            //pumpRefuelButton.className = "disabled"; 
+            pumpRefuelButton.className = "refuel-disabled"; 
             pumpUpgradeButton.disabled = true; 
-            //pumpUpgradeButton.className = "disabled"; 
+            pumpUpgradeButton.className = "upgrade-disabled"; 
         } else if (!Boolean(pumpIsWorking) && pump.fuel == 0) {
             pumpCollectButton.disabled = true; 
-            //pumpCollectButton.className = "disabled"; 
+            pumpCollectButton.className = "collect-disabled"; 
             pumpRefuelButton.disabled = false;
-            //pumpRefuelButton.className = "enabled";
+            pumpRefuelButton.className = "refuel style1";
             pumpUpgradeButton.disabled = false; 
-            //pumpUpgradeButton.className = "enabled";
+            pumpUpgradeButton.className = "upgrade style2";
         } else if (this.pumpCountDowns[pumpIndex] <= 0 && Boolean(pumpIsWorking)) {
             pumpCollectButton.disabled = false; 
-            //pumpCollectButton.className = "enabled";
+            pumpCollectButton.className = "collect style"; 
             pumpRefuelButton.disabled = true; 
-            //pumpRefuelButton.className = "disabled"; 
+            pumpRefuelButton.className = "refuel-disabled";
             pumpUpgradeButton.disabled = true; 
-            //pumpUpgradeButton.className = "disabled"; 
+            pumpUpgradeButton.className = "upgrade-disabled"; 
         }
         console.log("2");
     }
@@ -365,8 +423,8 @@ class DApp {
         let mileStone_1 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(0).call()));
         if (this.totalMined < mileStone_1) {
             this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_1) * 100}%`;
-            if (this.totalMined - mileStone_1 <= 10000) {
-                this.totalMinedBar_HTML.style.color = 'red';
+            if (mileStone_1 - this.totalMined  <= 10000) {
+                this.totalMinedElement_HTML.style.color = 'red';
                 this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_1}`;
             }
             
@@ -376,11 +434,65 @@ class DApp {
             .call({from: this.userAddress})));
             this.MileStoneElement_HTML.innerText = `Mile Stone: ${mileStone_2}`;
             this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_2) * 100}%`;
-            if (this.totalMined - mileStone_1 <= 50000) {
-                this.totalMinedBar_HTML.style.color = 'red';
+            if (mileStone_2 - this.totalMined <= 50000) {
+                this.totalMinedElement_HTML.style.color = 'red';
                 this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_2}`;
             }
 
+        }
+    }
+    async updateButtons() {
+        // Buy pump button
+        if(this.userPumpsLength == this.maxPumps){
+            //this.buyPumpButton_HTML.disabled = true;
+            this.buyPumpButton_HTML.className = ".button-style-disabled";
+            alert("Must purchase extra place");
+        }
+        else {
+            this.buyPumpButton_HTML.disabled = false;
+            this.buyPumpButton_HTML.className = "button-style";
+        }
+        // Buy extra place button
+        if(this.maxPumps == 5){
+            this.buyExtraPlaceButton_HTML.disabled = true;
+            this.buyExtraPlaceButton_HTML.className = "button-style-disabled";
+        }
+        // Refinery buttons
+        if(this.tokenBalance < 3){
+            this.drillOilButton_0_HTML.disabled = true;
+            this.drillOilButton_0_HTML.className = "style3-disabled";
+        }
+        else if(this.tokenBalance < 5){
+            this.drillOilButton_1_HTML.disabled = true;
+            this.drillOilButton_1_HTML.className = "style3-disabled";
+        }
+        else if(this.tokenBalance < 10){
+            this.drillOilButton_2_HTML.disabled = true;
+            this.drillOilButton_2_HTML.className = "style3-disabled";
+        }
+        // Pump Buttons
+        for(let index = 0; index<this.userPumpsLength; index++){
+            let pump = await this.contract.methods.userPumps(this.userAddress, index).call();
+            let upgradeButton = document.getElementById(`upgrade-button-${index}`); 
+            let refuelButton = document.getElementById(`refuel-button-${index}`); ;
+            // Check is token enough to upgrade pump
+            if(this.tokenBalance < this.getUpgradeCosts(parseInt(pump.level)+1)){
+                upgradeButton.disabled = true;
+                upgradeButton.className = "upgrade-disabled";
+            }
+            else {
+                upgradeButton.disabled = false;
+                upgradeButton.className = "upgrade style2";
+            }
+            // Check is token enough to refuel pump
+            if(this.tokenBalance < pump.fuelCapacity * this.getCurrentFuelPrice){
+                refuelButton.disabled = true;
+                refuelButton.className = "refuel-disabled";
+            }
+            else {
+                refuelButton.disabled = false;
+                refuelButton.className = "refuel style1";
+            }
         }
     }
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
@@ -390,28 +502,44 @@ class DApp {
         this.totalMinedElement_HTML = document.getElementById('total-mined');
         this.MileStoneElement_HTML = document.getElementById('total-mined-amount');
         this.depositBalance_HTML = document.getElementById("deposit-balance");
+        this.oilBalance_HTML = document.getElementById("oil-balance");
+        this.bankOilBalance_HTML = document.getElementById("bank-oil-balance");
+        this.bankTokenBalance_HTML = document.getElementById("bank-token-balance");
         this.fuelPrice_HTML = document.getElementById("current-fuel-price");
+        this.pumpTable_HTML = document.getElementById("pump-table");
         this.maticPool_HTML = document.getElementById("matic-pool");
         this.buyStationButton_HTML = document.getElementById("buy-station-button");
+        this.purchasePart_HTML = document.querySelectorAll(".matic-part");
+        this.refineryPart_HTML = document.querySelectorAll(".refinery-part");
         this.container_HTML = document.querySelectorAll(".container");
         this.container_2_HTML = document.querySelectorAll(".container2");
         this.container_3_HTML = document.querySelectorAll(".container3 .card2");
         this.part_2_HTML = document.querySelectorAll(".part2");
+        // Pump buttons
+        this.buyPumpButton_HTML = document.getElementById('buy-pump-button'); 
         this.collectPumpButton_0_HTML = document.getElementById("collect-button-0");
         this.collectPumpButton_1_HTML = document.getElementById("collect-button-1");
         this.collectPumpButton_2_HTML = document.getElementById("collect-button-2");
-        /*this.collectPumpButton_3_HTML = document.getElementById("collect-button-3");
-        this.collectPumpButton_4_HTML = document.getElementById("collect-button-4");*/
+        this.collectPumpButton_3_HTML = document.getElementById("collect-button-3");
+        this.collectPumpButton_4_HTML = document.getElementById("collect-button-4");
         this.refuelPumpButton_0_HTML = document.getElementById("refuel-button-0");
         this.refuelPumpButton_1_HTML = document.getElementById("refuel-button-1");
         this.refuelPumpButton_2_HTML = document.getElementById("refuel-button-2");
-        /*this.refuelPumpButton_3_HTML = document.getElementById("refuel-button-3");
-        this.refuelPumpButton_4_HTML = document.getElementById("refuel-button-4");*/
+        this.refuelPumpButton_3_HTML = document.getElementById("refuel-button-3");
+        this.refuelPumpButton_4_HTML = document.getElementById("refuel-button-4");
         this.upgradeButton_0_HTML = document.getElementById("upgrade-button-0");
         this.upgradeButton_1_HTML = document.getElementById("upgrade-button-1");
         this.upgradeButton_2_HTML = document.getElementById("upgrade-button-2");
-        /*this.upgradeButton_3_HTML = document.getElementById("upgrade-button-3");
-        this.upgradeButton_4_HTML = document.getElementById("upgrade-button-4");*/
+        this.upgradeButton_3_HTML = document.getElementById("upgrade-button-3");
+        this.upgradeButton_4_HTML = document.getElementById("upgrade-button-4");
+        // Extra place button
+        this.buyExtraPlaceButton_HTML = document.getElementById('buy-extra-place-button');
+        // Refinery Buttons
+        this.buyRefineryButton_HTML = document.getElementById('buy-refinery-button');
+        this.drillOilButton_0_HTML = document.getElementById('dig-oil-button-0');
+        this.drillOilButton_1_HTML = document.getElementById('dig-oil-button-1');
+        this.drillOilButton_2_HTML = document.getElementById('dig-oil-button-2');
+        
     }
     displayContainer() {
         // Makes the display property "flex" for each element
@@ -461,9 +589,30 @@ class DApp {
             element.style.display = "none";
             });
     }
+    displayPurchasePart() {
+        // Makes the display property "flex" for each element
+        this.purchasePart_HTML.forEach(function(element) {
+            element.style.display = "flex";
+            });
+    }                   
+    hidePurchasePart() {                                    
+        // Makes the display property "none" for each element
+        this.purchasePart_HTML.forEach(function(element) {
+            element.style.display = "none";
+            });
+    }
+    displayRefineryPart() {
+        this.refineryPart_HTML.forEach(function(element) {
+            element.style.display = "flex";
+            });
+    }
+    hideRefineryPart() {
+        this.refineryPart_HTML.forEach(function(element) {
+            element.style.display = "none";
+            });
+    }
 }
 window.onload = async function() {
     let dApp = new DApp();
     await dApp.initialize();
-    // Diğer başlangıç kodlarınız
 }
