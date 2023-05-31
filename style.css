@@ -3,18 +3,15 @@
     padding: 0;
     box-sizing: border-box;
 }
-
-
+body{
+    background-color: gainsboro;
+    font-family: 'Poppins', sans-serif;
+}
 #navbar{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #0A0F11;
-    opacity: 0.9;
-    padding: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    border-bottom: 1px solid red;
 }
 #navbar ul{
     display: flex;
@@ -22,145 +19,139 @@
 }
 #navbar ul li{
     margin: 10px;
+    font-size: 25px;
     font-weight: bold;
-    font-size: 20px;
-    color: white;
 }
-#connect{
-    background-color: white;
-    border-radius: 30px;
-    padding: 10px 20px;
-    color: #03A9F4;
-    font-size: 18px;
-    font-weight: 600;
-    transition: all 0.5s;
-}
-#connect:hover{
-    color: white;
-    background-color: #03A9F4;
-    cursor: pointer;
-}
-.card{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-}
-.matic{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.container1{
-    background-image: url(./images/Leonardo_Diffusion_Gas_station_near_the_road_with_retro_game_a_2.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 900px;
-}
-.container1 h1{
-    font-size: 30px;
-    font-style: italic;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-.container1 img{
-    margin-bottom: 15px;
-}
-.container1 a{
+#navbar ul li a{
+    color: black;
+    padding: 10px 25px;
     text-decoration: none;
-    color: orange;
+    font-size:23px;
+    border: 1px solid black;
     border-radius: 30px;
-    padding: 15px 20px;
-    background-color: white;
-    font-size: 24px;
-    transition: all 0.5s;
 }
-.container1 a:hover{
-    background-color: orange;
-    color: white;
+.section1{
+    margin-top: 40px;
 }
-.container2{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #31454C;
-}
-.container2 img{
+.section1 img{
     display: block;
     margin: 0 auto;
 }
-.container2  p{
-    font-size: 20px;
+.section1 h1{
     text-align: center;
-   color: white;
+    margin: 10px 0px;
+    font-size: 80px;
 }
-.container2 .card1{
-    margin: 10px;
-}
-.link{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-}
-.link a{
+.section1 a{
+    color: black;
+    padding: 10px 25px;
     text-decoration: none;
-    color: white;
-    border-radius: 20px;
-    background-color: #03A9F4;
-    padding: 15px 25px;
-    font-size: 20px;
+    font-size:23px;
+    border: 1px solid black;
+    border-radius: 30px;
+}
+.section2{
+    margin-top: 80px;
+}
+.section2 h2{
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+}
+.section2 p{
+    font-size: 25px;
+    text-align: center;
+    font-weight: bold;
+    width: 900px;
+    position: relative;
+    left: 300px;
+    opacity: 0.7;
+    line-height: 2.5rem;
+    margin-bottom: 25px;
+}
+.section3 {
+    margin-top: 80px;
 }
 
-#footer{
+.section3 h1{
+    font-size: 50px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+.section3 .card{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: black;
-    padding: 30px;
+    margin-top: 25px;
 }
-#footer ul{
-   list-style:none;
-   display: flex;
+.section3 .card p{
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 2.5rem;
+    margin-bottom: 25px;
+}
+.section3 .card a{
+    color: black;
+    padding: 10px 25px;
+    text-decoration: none;
+    font-size:23px;
+    border: 1px solid black;
+    border-radius: 30px;
+    transition: all 0.5s;
+}
+.section3 .card a:hover{
+    background-color: green;
+    color: white;
+}
+#footer{
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#footer ul {
+    display: flex;
+    list-style: none;
 }
 #footer ul li{
     margin: 10px 20px;
-    transition: all 0.5s;
-}
-#footer ul li a{
-    text-decoration: none;
-    color: white;
-    font-size: 24px;
-    font-style: italic;
+    border: 1px solid gainsboro;
+    padding: 20px;
+    background-color: red;
+    border-radius: 10px;
     transition: all 0.5s;
 }
 #footer ul li:hover{
-    transform: translateY(8px);
+    transform: translateY(-8px);
+    cursor: pointer;
 }
-#footer ul li a:hover{
-    color: #03A9F4;
-}
-.icon{
-    border: 1px solid #437480;
+#footer i{
+    font-size: 70px;
     color: white;
-    padding: 10px;
-    margin-right: 5px;
-    transition: all 0.5s;
 }
-.icon:hover{
-    color: #437480;
-    background-color: white;
-}
-.secret{
-    text-decoration: none;
-    color: white;
-    border-radius: 30px;
-    border: 1px solid #437480;
-    padding: 10px 25px;
-    font-size: 20px;
-    transition: all 0.5s;
-}
-.secret:hover{
-    color: #437480;
-    background-color: white;
+@media  screen and (max-width:767px){
+    
+    .section2 p{
+       position: relative;
+       left: 0px;
+       width: 400px;
+    }
+    .section3 .card{
+        flex-direction: column;
+        margin-top:50px ;
+        margin-bottom: 20px;
+    }
+    .section3 .card p{
+        margin-bottom: 35px;
+    }
+    #footer{
+       margin-top: 0px;
+       height: 400px;
+    }
+    #footer ul{
+        flex-direction: row;
+        align-self: flex-start;
+    }
 }
