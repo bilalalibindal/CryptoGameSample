@@ -478,4 +478,44 @@ body{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
+@media  screen and (max-width:767px){
+  .container{
+    margin-bottom: 80px;
+    flex-direction: column;
+  }
+ .part1{
+  align-items: center;
+ }
+ .progress-bar{
+  width: 360px;
+ }
+ .card-part1{
+  flex-direction: column !important;
+ }
+ .matic-part{
+  width: 50%;
+  justify-content: center;
+ }
+ .container .card-part{
+  align-self: center !important;
+  margin: 15px 0px;
+ }
+ .card1-part1{
+  margin: 25px 0px;
+ }
+ .container3{
+  flex-direction: column;
+ }
+ .right{
+  position: relative;
+  right: 40px;
+ }
+ .refinery-part{
+  height: 900px;
+ }
+ .button-style-disabled{
+  position: relative;
+  left: 50px !important;
+  bottom: 120px;
+ }
+}
