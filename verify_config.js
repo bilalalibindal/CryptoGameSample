@@ -1,4 +1,4 @@
-var verifyContractAddress = "0x4947dD2EB19457af7E58Fa94B83E4e61b8ed35E9";
+var verifyContractAddress = "0x1B5737e7B2FF42aE04C1400928213480DB1FA305";
 var verifyContractAbi = [
 	{
 		"inputs": [],
