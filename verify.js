@@ -15,29 +15,29 @@ class Verify {
     }
     async switchToNetwork() {
         // Define network.
-        const mumbaiChain = {
-            chainId: '0x13881',
-            chainName: 'Mumbai Testnet',
+        const polygonChain = {
+            chainId: '0x89',
+            chainName: 'Polygon Mainnet',
             nativeCurrency: {
                 name: 'Matic',
                 symbol: 'MATIC',
                 decimals: 18,
             },
-            rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-            blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+            rpcUrls: ['https://polygon-rpc.com/'],
+            blockExplorerUrls: ['https://polygonscan.com/'],
         };
     
         try {
             // Add network to metamask.
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [mumbaiChain],
+                params: [polygonChain],
             });
     
             // And switch to network we added.
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x13881' }],
+                params: [{ chainId: '0x89' }],
             });
         } catch (error) {
             console.error(error);
@@ -48,7 +48,7 @@ class Verify {
         if (window.ethereum) { // Check is metamask exist.
             try {
                 const { networkId } = await this.getConnectedNetwork(); // Check is user connected to true network
-                if (networkId != 80001) { // 8001 is mumbai network's chain id
+                if (networkId != 137) { // 8001 is mumbai network's chain id
                     await this.switchToNetwork(); // if user is not connected to true network, switch it
                 }
                 // Get user's metamask address.
@@ -70,7 +70,7 @@ class Verify {
         const code = urlParams.get('code');
         await this.contract.methods.verify(discordID,code).send({ 
             from: this.userAddress,
-            value: this.web3.utils.toWei("0.1", "ether") });
+            value: this.web3.utils.toWei("0.5", "ether") });
     }   
 }
 window.onload = async function() {
