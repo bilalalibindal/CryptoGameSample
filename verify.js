@@ -97,7 +97,7 @@ class Verify {
     
         setTimeout(() => {
             document.body.removeChild(alertDiv);
-        }, 5000); // After 5 seconds, remove the alert.
+        }, 6000); // After 6 seconds, remove the alert.
     }
     
        
