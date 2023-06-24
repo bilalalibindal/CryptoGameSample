@@ -10,22 +10,6 @@ class DApp {
         this.pumpCountDowns = []; // Array for multiple count down times
         this.intervalIDs = []; // Array for multiple count downs
     }
-    showAlert(message) {
-        let alertDiv = document.createElement('div');
-        alertDiv.style.position = 'fixed';
-        alertDiv.style.bottom = '10px';
-        alertDiv.style.left = '10px';
-        alertDiv.style.backgroundColor = 'red';
-        alertDiv.style.color = 'white';
-        alertDiv.style.padding = '10px';
-        alertDiv.textContent = message;
-    
-        document.body.appendChild(alertDiv);
-    
-        setTimeout(() => {
-            document.body.removeChild(alertDiv);
-        }, 6000); // After 6 seconds, remove the alert.
-    }
     setupEventListeners() {
         this.buyStationButton_HTML.addEventListener('click', () => this.buyStation());
         // Bank Buttons
@@ -111,7 +95,7 @@ class DApp {
                 console.error("Access denied, please try again.", error);
             }
         } else {
-            this.showAlert("Metamask extension is not found.");
+            window.showAlert("Metamask extension is not found.");
         }
     }
     /* ---------------------------------------------- CONTRACT METHODS ---------------------------------------------- */

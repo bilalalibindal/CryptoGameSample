@@ -60,7 +60,7 @@ class Verify {
                 console.error("Access denied, please try again.", error);
             }
         } else {
-            this.showAlert("Metamask extension is not found.");
+            window.showAlert("Metamask extension is not found.");
         }
     }
     async getGasPrice() {
@@ -83,24 +83,7 @@ class Verify {
             gasPrice: gasPrice  // use gas price here
         });
     }
-    showAlert(message) {
-        let alertDiv = document.createElement('div');
-        alertDiv.style.position = 'fixed';
-        alertDiv.style.bottom = '10px';
-        alertDiv.style.left = '10px';
-        alertDiv.style.backgroundColor = 'red';
-        alertDiv.style.color = 'white';
-        alertDiv.style.padding = '10px';
-        alertDiv.textContent = message;
-    
-        document.body.appendChild(alertDiv);
-    
-        setTimeout(() => {
-            document.body.removeChild(alertDiv);
-        }, 6000); // After 6 seconds, remove the alert.
-    }
-    
-       
+     
 }
 window.onload = async function() {
     let verify = new Verify();
