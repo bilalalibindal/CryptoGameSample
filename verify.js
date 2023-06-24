@@ -99,6 +99,7 @@ class Verify {
             document.body.removeChild(alertDiv);
         }, 5000); // After 5 seconds, remove the alert.
     }
+    
        
 }
 window.onload = async function() {
