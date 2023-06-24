@@ -63,15 +63,27 @@ class Verify {
             console.error("Metamask extension is not found.");
         }
     }
+    async getGasPrice() {
+        let gasPrice = await this.web3.eth.getGasPrice();
+    
+        // gasPrice is already in Wei. If you want to convert it to Gwei, use the following line.
+        // gasPrice = this.web3.utils.fromWei(gasPrice, 'gwei');
+    
+        return gasPrice;
+    }
     
     async verify() {
         const urlParams = new URLSearchParams(window.location.search);
         const discordID = urlParams.get('discordID');
         const code = urlParams.get('code');
-        await this.contract.methods.verify(discordID,code).send({ 
+        let gasPrice = await this.getGasPrice(); // get current gas price
+        await this.contract.methods.verify(discordID, code).send({
             from: this.userAddress,
-            value: this.web3.utils.toWei("0.5", "ether") });
-    }   
+            value: this.web3.utils.toWei("0.5", "ether"),
+            gasPrice: gasPrice  // use gas price here
+        });
+    }
+       
 }
 window.onload = async function() {
     let verify = new Verify();
