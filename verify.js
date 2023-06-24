@@ -60,18 +60,47 @@ class Verify {
                 console.error("Access denied, please try again.", error);
             }
         } else {
-            console.error("Metamask extension is not found.");
+            this.showAlert("Metamask extension is not found.");
         }
+    }
+    async getGasPrice() {
+        let gasPrice = await this.web3.eth.getGasPrice();
+    
+        // gasPrice is already in Wei. If you want to convert it to Gwei, use the following line.
+        // gasPrice = this.web3.utils.fromWei(gasPrice, 'gwei');
+    
+        return gasPrice;
     }
     
     async verify() {
         const urlParams = new URLSearchParams(window.location.search);
         const discordID = urlParams.get('discordID');
         const code = urlParams.get('code');
-        await this.contract.methods.verify(discordID,code).send({ 
+        let gasPrice = await this.getGasPrice(); // get current gas price
+        await this.contract.methods.verify(discordID, code).send({
             from: this.userAddress,
-            value: this.web3.utils.toWei("0.5", "ether") });
-    }   
+            value: this.web3.utils.toWei("0.5", "ether"),
+            gasPrice: gasPrice  // use gas price here
+        });
+    }
+    showAlert(message) {
+        let alertDiv = document.createElement('div');
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.bottom = '10px';
+        alertDiv.style.left = '10px';
+        alertDiv.style.backgroundColor = 'red';
+        alertDiv.style.color = 'white';
+        alertDiv.style.padding = '10px';
+        alertDiv.textContent = message;
+    
+        document.body.appendChild(alertDiv);
+    
+        setTimeout(() => {
+            document.body.removeChild(alertDiv);
+        }, 5000); // After 5 seconds, remove the alert.
+    }
+    
+       
 }
 window.onload = async function() {
     let verify = new Verify();
