@@ -1,4 +1,4 @@
-var verifyContractAddress = "0x14Ed533e3A88E9a7e5e04F0fDfDA53c8B40A9c3e";
+var verifyContractAddress = "0x42458f6F1955e88DDcb5104cEedA6d12599A71a6";
 var verifyContractAbi = [
 	{
 		"inputs": [],
@@ -9,7 +9,7 @@ var verifyContractAbi = [
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
@@ -46,25 +46,6 @@ var verifyContractAbi = [
 		"name": "verify",
 		"outputs": [],
 		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "userDiscordId",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	}
 ]
