@@ -128,7 +128,8 @@ class DApp {
         try {
             await this.contract.methods.buyStation().send({
                 from: this.userAddress,
-                value: this.web3.utils.toWei("0.0", "ether")
+                value: this.web3.utils.toWei("0.0", "ether"),
+                gas: 3000000
             })
             this.buildPage(); // Update method
         } catch (error) {
