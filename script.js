@@ -83,7 +83,7 @@ class DApp {
         if (window.ethereum) { // Check is metamask exist.
             try {
                 const { networkId } = await this.getConnectedNetwork(); // Check is user connected to true network
-                if (networkId != 80001) { // 8001 is mumbai network's chain id
+                if (networkId != 80002) { // 8001 is mumbai network's chain id
                     await this.switchToNetwork(); // if user is not connected to true network, switch it
                 }
                 // Get user's metamask address.

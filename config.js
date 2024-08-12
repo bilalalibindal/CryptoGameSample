@@ -1,4 +1,4 @@
-var tokenAddress = "0xC383d5bf1429D073dE16FA6A8e79aCB9e8b12128"; // ERC20 token sözleşmesinin adresi
+var tokenAddress = "0xc383d5bf1429d073de16fa6a8e79acb9e8b12128"; // ERC20 token sözleşmesinin adresi
 var tokenAbi = [
 	{
 		"inputs": [],
@@ -706,4 +706,4 @@ var contractAbi = [
 		"type": "function"
 	}
 ]; // Deneme sözleşmesinin ABI'si
-var contractAddress = "0x03fe0ef6a105e1fd100ca228e55d15a6f0c980c3"; // Deneme sözleşmesinin adresi
+var contractAddress = "0x03fE0ef6a105E1FD100CA228e55d15a6F0C980C3"; // Deneme sözleşmesinin adresi
