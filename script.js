@@ -119,23 +119,28 @@ class DApp {
         this.isRefineryOwner = this.users.isRefineryOwner;
         this.lastDrillOilTime = this.users.lastDrillOilTime;
         this.maxPumps = this.users.maxPumps;
-        this.tokenBalance = this.web3.utils.fromWei(this.users.tokenBalance);
+        
+        // Eğer tokenBalance undefined ise 0 yap
+        this.tokenBalance = this.users.tokenBalance ? this.web3.utils.fromWei(this.users.tokenBalance) : '0';
+        
         this.oilBalance = this.users.oilBalance;
-
+    
         // Define and get userPumpsLength from smart contract
         this.userPumpsLength = await this.contract.methods.getUserPumpsLength(this.userAddress).call();
-
-        // Define total mined and pull value from smart contract
-        this.totalMined = this.web3.utils.fromWei(await this.contract.methods.totalMined().call({ from: this.userAddress }));
-
-        // Get value of current fuel price
-        this.fuelPrice = this.web3.utils.fromWei(await this.contract.methods.getCurrentFuelPrice().call());
-
-        // Get contract balance
+        
+        // Eğer totalMined undefined ise 0 yap
+        const totalMinedValue = await this.contract.methods.totalMined().call({ from: this.userAddress });
+        this.totalMined = totalMinedValue ? this.web3.utils.fromWei(totalMinedValue) : '0';
+    
+        // Eğer fuelPrice undefined ise 0 yap
+        const fuelPriceValue = await this.contract.methods.getCurrentFuelPrice().call();
+        this.fuelPrice = fuelPriceValue ? this.web3.utils.fromWei(fuelPriceValue) : '0';
+    
         await this.web3.eth.getBalance(contractAddress, (err, wei) => { 
             this.maticPoolAmount = this.web3.utils.fromWei(wei, 'ether'); 
         });
     }
+    
 
     /* ---------------------------------------------- EVENT METHODS ---------------------------------------------- */
     async buyStation() {
