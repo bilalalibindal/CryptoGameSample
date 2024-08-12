@@ -259,7 +259,8 @@ class DApp {
         await this.defineFromContract();
         this.updateTopMenu();
     }
-    async checkStation() { // Check is user has station.
+    async checkStation() {
+        console.log(`istasyon sahibi mi: ${this.isStationOwner}`) // Check is user has station.
         this.loadingIcon.style.display = 'block';
         if (!this.isStationOwner) {
             this.displayPart2();
