@@ -2,7 +2,7 @@
 class DApp {
     // Define important valuables and contracts in constructor
     constructor() {
-        this.web3 = new Web3(window.ethereum); // web3 library for metamask
+        this.web3 = new Web3(window.ethereum); // web3 library for MetaMask
         // contractAbi and contractAddress and tokenAbi and tokenAddress comes from config.js file
         this.contract = new this.web3.eth.Contract(contractAbi, contractAddress); // Smart Contract setup
         this.tokenContract = new this.web3.eth.Contract(tokenAbi, tokenAddress); // token Contract
@@ -10,6 +10,7 @@ class DApp {
         this.pumpCountDowns = []; // Array for multiple count down times
         this.intervalIDs = []; // Array for multiple count downs
     }
+
     setupEventListeners() {
         this.buyStationButton_HTML.addEventListener('click', () => this.buyStation());
         // Bank Buttons
@@ -19,6 +20,7 @@ class DApp {
         document.getElementById('max-deposit-button').addEventListener('click', () => this.max('deposit'));
         document.getElementById('max-withdraw-button').addEventListener('click', () => this.max('withdraw'));
         document.getElementById('max-sell-oil-button').addEventListener('click', () => this.max('sell-oil'));
+
         // Pump Buttons
         this.buyPumpButton_HTML.addEventListener('click', () => this.createPump());
         this.collectPumpButton_0_HTML.addEventListener('click', () => this.collectPump(0));
@@ -36,22 +38,26 @@ class DApp {
         this.collectPumpButton_4_HTML.addEventListener('click', () => this.collectPump(4));
         this.refuelPumpButton_4_HTML.addEventListener('click', () => this.refuelPump(4));
         this.upgradeButton_4_HTML.addEventListener('click', () => this.upgradePump(4));
+
         // Extra Place Button
         this.buyExtraPlaceButton_HTML.addEventListener('click', () => this.buyExtraPlace());
+
         // Refinery Buttons
         this.buyRefineryButton_HTML.addEventListener('click', () => this.buyRefinery());
         this.drillOilButton_0_HTML.addEventListener('click', () => this.drillOil(3));
         this.drillOilButton_1_HTML.addEventListener('click', () => this.drillOil(5));
         this.drillOilButton_2_HTML.addEventListener('click', () => this.drillOil(10));
     }
+
     async getConnectedNetwork() {
         const networkId = await window.ethereum.request({ method: 'eth_chainId' });
         return networkId;
     }
+
     async switchToNetwork() {
         // Define network.
         const amoyChain = {
-            chainId: '0x13882',
+            chainId: '0x13882', // Polygon Amoy Testnet chainId
             chainName: 'Polygon Amoy Testnet',
             nativeCurrency: {
                 name: 'Matic',
@@ -61,48 +67,51 @@ class DApp {
             rpcUrls: ['https://rpc-amoy.polygon.technology/'],
             blockExplorerUrls: ['https://amoy.polygonscan.com/'],
         };
-    
+
         try {
-            // Add network to metamask.
+            // Add network to MetaMask.
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
                 params: [amoyChain],
             });
-    
+
             // And switch to network we added.
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x13882' }],
+                params: [{ chainId: amoyChain.chainId }],
             });
         } catch (error) {
             console.error(error);
         }
     }
-    // Connect metamask and start to update and pull data.
+
+    // Connect MetaMask and start to update and pull data.
     async initialize() {
-        if (window.ethereum) { // Check is metamask exist.
+        if (window.ethereum) { // Check if MetaMask exists.
             try {
-                const { networkId } = await this.getConnectedNetwork(); // Check is user connected to true network
-                if (networkId != 80002) { // 8001 is mumbai network's chain id
-                    await this.switchToNetwork(); // if user is not connected to true network, switch it
+                const networkId = await this.getConnectedNetwork(); // Check if user is connected to the correct network
+                if (networkId !== '0x13882') { // Check if connected to the correct network
+                    await this.switchToNetwork(); // If user is not connected to the correct network, switch it
                 }
-                // Get user's metamask address.
+                // Get user's MetaMask address.
                 const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-                this.userAddress = accounts[0]; // bring and define user's first address from metamask.
+                this.userAddress = accounts[0]; // Define user's first address from MetaMask.
                 await this.buildPage();
                 console.log(this.userAddress);
             } catch (error) {
                 console.error("Access denied, please try again.", error);
             }
         } else {
-            window.showAlert("Metamask extension is not found.");
+            alert("MetaMask extension is not found.");
         }
     }
+
     /* ---------------------------------------------- CONTRACT METHODS ---------------------------------------------- */
     // Method to bring upgrade costs from contract
     async getUpgradeCosts(level) {
         return await this.contract.methods.getUpgradeCost(level).call();
     }
+
     async defineFromContract() {
         // Define users mapping and variables from smart contract
         this.users = await this.contract.methods.users(this.userAddress).call();
@@ -112,52 +121,59 @@ class DApp {
         this.maxPumps = this.users.maxPumps;
         this.tokenBalance = this.web3.utils.fromWei(this.users.tokenBalance);
         this.oilBalance = this.users.oilBalance;
+
         // Define and get userPumpsLength from smart contract
         this.userPumpsLength = await this.contract.methods.getUserPumpsLength(this.userAddress).call();
+
         // Define total mined and pull value from smart contract
-        this.totalMined = this.web3.utils.fromWei(await this.contract.methods.totalMined()
-        .call({ from: this.userAddress }))
+        this.totalMined = this.web3.utils.fromWei(await this.contract.methods.totalMined().call({ from: this.userAddress }));
+
         // Get value of current fuel price
         this.fuelPrice = this.web3.utils.fromWei(await this.contract.methods.getCurrentFuelPrice().call());
+
+        // Get contract balance
         await this.web3.eth.getBalance(contractAddress, (err, wei) => { 
             this.maticPoolAmount = this.web3.utils.fromWei(wei, 'ether'); 
         });
     }
+
     /* ---------------------------------------------- EVENT METHODS ---------------------------------------------- */
     async buyStation() {
         try {
             await this.contract.methods.buyStation().send({
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether"),
-            })
+            });
             this.buildPage(); // Update method
         } catch (error) {
             console.error("Purchase station transaction has been denied");
         }
     }
+
     async buyRefinery() {
         try {
             await this.contract.methods.buyRefinery().send({
                 from: this.userAddress,
                 value: this.web3.utils.toWei("0.0", "ether")
-            })
+            });
             this.buildPage(); // Update method
         } catch (error) {
-            console.error("Purchase station transaction has been denied");
+            console.error("Purchase refinery transaction has been denied");
         }
     }
+
     async deposit() {
         try {
             let depositAmount = document.getElementById("deposit-amount").value;
             let tokenAmount = this.web3.utils.toWei(depositAmount.toString());
-            await this.tokenContract.methods.approve(contractAddress,tokenAmount).send({ from: this.userAddress });
+            await this.tokenContract.methods.approve(contractAddress, tokenAmount).send({ from: this.userAddress });
             await this.contract.methods.deposit(tokenAmount).send({ from: this.userAddress });
             await this.updateTopMenu();
-            }
-        catch (error) {
+        } catch (error) {
             console.error("Deposit failed.", error);
         }
     }
+
     async withdraw() {
         try {
             let withdrawAmount = document.getElementById("withdraw-amount").value;
@@ -168,6 +184,7 @@ class DApp {
             console.error("Withdraw failed.", error);
         }
     }
+
     async drillOil(pwlAmount) {
         try {
             await this.contract.methods.drillOil(this.web3.utils.toWei(`${pwlAmount}`, 'ether')).send({ from: this.userAddress });
@@ -176,6 +193,7 @@ class DApp {
             console.error("Drill Oil Failed.", error);
         }
     }
+
     async sellOil() {
         try {
             let oilAmount = document.getElementById("sell-oil-amount").value;
@@ -185,8 +203,9 @@ class DApp {
             console.error("Sell Oil Failed.", error);
         }
     }
+
     async max(process) {
-        let amount = document.getElementById(`${process}-amount`)
+        let amount = document.getElementById(`${process}-amount`);
         if (process == 'deposit') {
             amount.max = this.web3.utils.fromWei(await this.tokenContract.methods.balanceOf(this.userAddress).call());
             amount.value = amount.max;
@@ -197,35 +216,61 @@ class DApp {
             amount.max = this.oilBalance;
             amount.value = amount.max;
         }
+    }
 
-    }
     async createPump() {
-        const result = await this.contract.methods.createPump().send({ from: this.userAddress });
-        console.log("Pump created successfully:", result);
-        await this.updateTopMenu();
-        this.buildPumps();
+        try {
+            const result = await this.contract.methods.createPump().send({ from: this.userAddress });
+            console.log("Pump created successfully:", result);
+            await this.updateTopMenu();
+            this.buildPumps();
+        } catch (error) {
+            console.error("Create pump failed.", error);
+        }
     }
+
     async buyExtraPlace() {
-        await this.contract.methods.buyExtraPlace().send({ 
-            from: this.userAddress,
-            value: this.web3.utils.toWei("0.0", "ether") });
-        this.updateUI();
+        try {
+            await this.contract.methods.buyExtraPlace().send({
+                from: this.userAddress,
+                value: this.web3.utils.toWei("0.0", "ether")
+            });
+            this.updateUI();
+        } catch (error) {
+            console.error("Buy extra place failed.", error);
+        }
     }
+
     async collectPump(pumpIndex) {
-        await this.contract.methods.collect(pumpIndex).send({ from: this.userAddress });
-        await this.updateTopMenu();
-        this.buildPump(pumpIndex);
+        try {
+            await this.contract.methods.collect(pumpIndex).send({ from: this.userAddress });
+            await this.updateTopMenu();
+            this.buildPump(pumpIndex);
+        } catch (error) {
+            console.error("Collect pump failed.", error);
+        }
     }
+
     async refuelPump(pumpIndex) {
-        await this.contract.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
-        await this.updateTopMenu();
-        this.buildPump(pumpIndex);
+        try {
+            await this.contract.methods.refuelPump(pumpIndex).send({ from: this.userAddress });
+            await this.updateTopMenu();
+            this.buildPump(pumpIndex);
+        } catch (error) {
+            console.error("Refuel pump failed.", error);
+        }
     }
+
     async upgradePump(pumpIndex) {
-        await this.contract.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
-        await this.updateTopMenu();
-        this.buildPump(pumpIndex);
+        try {
+            await this.contract.methods.upgradePump(pumpIndex).send({ from: this.userAddress });
+            await this.updateTopMenu();
+            this.buildPump(pumpIndex);
+        } catch (error) {
+            console.error("Upgrade pump failed.", error);
+        }
     }
+
     /* ---------------------------------------------- UPDATE METHODS ---------------------------------------------- */
     async buildPage() {
         // run set variables function.
@@ -234,12 +279,12 @@ class DApp {
         await this.defineFromContract();
         await this.checkStation();
         await this.checkRefinery();
-        await this.checkRefinery();
         await this.updateTopMenu();
         await this.buildPumps();
         this.setupEventListeners();
         this.loadingIcon.style.display = 'none';
     }
+
     async buildPumps() {
         this.loadingIcon.style.display = 'block';
         this.buyPumpButton_HTML.innerText = `BUY\n${this.web3.utils.fromWei(await this.getUpgradeCosts(1))} PWL`;
@@ -248,6 +293,7 @@ class DApp {
         await this.updateAllPump();
         this.loadingIcon.style.display = 'none';
     }
+
     async buildPump(pumpIndex) {
         this.loadingIcon.style.display = 'block';
         await this.updatePumpCooldown(pumpIndex);
@@ -255,12 +301,14 @@ class DApp {
         await this.updatePump(pumpIndex);
         this.loadingIcon.style.display = 'none';
     }
+
     async updateUI() {
         await this.defineFromContract();
         this.updateTopMenu();
     }
+
     async checkStation() {
-        console.log(`istasyon sahibi mi: ${this.isStationOwner}`) // Check is user has station.
+        console.log(`İstasyon sahibi mi: ${this.isStationOwner}`) // Check if user has a station.
         this.loadingIcon.style.display = 'block';
         if (!this.isStationOwner) {
             this.displayPart2();
@@ -269,33 +317,31 @@ class DApp {
             this.hideContainer3();
             this.hidePurchasePart();
             this.hideRefineryPart();
-        }                                // Visibility settings of images and properties
-        else {
+        } else {
             this.hidePart2();
             this.displayContainer();
             this.displayContainer2();
             this.displayContainer3();
-            this.hidePurchasePart();
             this.displayPurchasePart();
             this.displayRefineryPart();
         }
-        this.loadingIcon.style.display = 'none'; 
+        this.loadingIcon.style.display = 'none';
     }
+
     async checkRefinery() {
         this.loadingIcon.style.display = 'block';
-        if(!this.isRefineryOwner) {
+        if (!this.isRefineryOwner) {
             this.buyRefineryButton_HTML.disabled = false;
-            this.buyRefineryButton_HTML.className = "button-style"
+            this.buyRefineryButton_HTML.className = "button-style";
             this.drillOilButton_0_HTML.disabled = true;
             this.drillOilButton_0_HTML.className = "style3-disabled";
             this.drillOilButton_1_HTML.disabled = true;
             this.drillOilButton_1_HTML.className = "style3-disabled";
             this.drillOilButton_2_HTML.disabled = true;
             this.drillOilButton_2_HTML.className = "style3-disabled";
-        }
-        else {
+        } else {
             this.buyRefineryButton_HTML.disabled = true;
-            this.buyRefineryButton_HTML.className = "button-style-disabled"
+            this.buyRefineryButton_HTML.className = "button-style-disabled";
             this.drillOilButton_0_HTML.disabled = false;
             this.drillOilButton_0_HTML.className = "style3";
             this.drillOilButton_1_HTML.disabled = false;
@@ -304,7 +350,8 @@ class DApp {
             this.drillOilButton_2_HTML.className = "style3";
         }
         this.loadingIcon.style.display = 'none';
-    }   
+    }
+
     async updateTopMenu() {
         await this.defineFromContract();
         this.loadingIcon.style.display = 'block';
@@ -316,23 +363,27 @@ class DApp {
         this.fuelPrice_HTML.innerText = `= ${this.fuelPrice}`;
         this.maticPool_HTML.innerText = this.maticPoolAmount;
         this.pumpTable_HTML.innerText = `Pumps: ${this.userPumpsLength}\nMax: ${this.maxPumps}`;
-        this.loadingIcon.style.display = 'none'; 
+        this.loadingIcon.style.display = 'none';
     }
-    async updateAllPump(){
-        for(let index = 0; index<this.userPumpsLength; index++){
+
+    async updateAllPump() {
+        for (let index = 0; index < this.userPumpsLength; index++) {
             await this.updatePump(index);
         }
     }
-    async updateAllPumpFeatures(){
-        for(let index = 0; index<this.userPumpsLength; index++){
+
+    async updateAllPumpFeatures() {
+        for (let index = 0; index < this.userPumpsLength; index++) {
             await this.updatePumpFeatures(index);
         }
     }
-    async updateAllPumpCooldown(){
-        for(let index = 0; index<this.userPumpsLength; index++){
+
+    async updateAllPumpCooldown() {
+        for (let index = 0; index < this.userPumpsLength; index++) {
             await this.updatePumpCooldown(index);
         }
     }
+
     async updatePump(pumpIndex) {
         let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
         let pumpSection = document.getElementById(`pump-section-${pumpIndex}`);
@@ -341,6 +392,7 @@ class DApp {
         pumpImg.src = `./images/pump${pump.level}.svg`;
         console.log("1");
     }
+
     async updatePumpFeatures(pumpIndex) {
         let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
         let pumpFuelCapacity = document.getElementById(`pump-fuel-capacity-${pumpIndex}`);
@@ -349,50 +401,47 @@ class DApp {
         let pumpUpgradeButton = document.getElementById(`upgrade-button-${pumpIndex}`);
         let pumpFuelBar = document.getElementById(`fuel-bar-${pumpIndex}`);
         const pumpIsWorking = pump.isWorking;
-        if (pump.level >= 3){
+        if (pump.level >= 3) {
             pumpUpgradeButton.style.display = "none";
         }
-        if (pump.fuel != 0){
+        if (pump.fuel != 0) {
             pumpFuelBar.style.height = "100%";
-        }
-        else {
+        } else {
             pumpFuelBar.style.height = "0%";
         }
         pumpFuelCapacity.innerText = pump.fuelCapacity;
         pumpCollectButton.innerText = `COLLECT\n${pump.fuelCapacity * this.fuelPrice} PWL`;
         pumpRefuelButton.innerText = `REFUEL\n${pump.fuelCapacity * this.fuelPrice * 0.05} PWL`;
-        pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei
-            (await this.getUpgradeCosts(parseInt(pump.level)+1))} PWL`;
-        if (Boolean(pumpIsWorking) && this.pumpCountDowns[pumpIndex]>0) {
-            pumpCollectButton.disabled = true; 
-            pumpCollectButton.className = "collect-disabled"; 
-            pumpRefuelButton.disabled = true; 
-            pumpRefuelButton.className = "refuel-disabled"; 
-            pumpUpgradeButton.disabled = true; 
-            pumpUpgradeButton.className = "upgrade-disabled"; 
+        pumpUpgradeButton.innerText = `UPGRADE\n${this.web3.utils.fromWei(await this.getUpgradeCosts(parseInt(pump.level) + 1))} PWL`;
+        if (Boolean(pumpIsWorking) && this.pumpCountDowns[pumpIndex] > 0) {
+            pumpCollectButton.disabled = true;
+            pumpCollectButton.className = "collect-disabled";
+            pumpRefuelButton.disabled = true;
+            pumpRefuelButton.className = "refuel-disabled";
+            pumpUpgradeButton.disabled = true;
+            pumpUpgradeButton.className = "upgrade-disabled";
         } else if (!Boolean(pumpIsWorking) && pump.fuel == 0) {
-            pumpCollectButton.disabled = true; 
-            pumpCollectButton.className = "collect-disabled"; 
+            pumpCollectButton.disabled = true;
+            pumpCollectButton.className = "collect-disabled";
             pumpRefuelButton.disabled = false;
             pumpRefuelButton.className = "refuel style1";
-            pumpUpgradeButton.disabled = false; 
+            pumpUpgradeButton.disabled = false;
             pumpUpgradeButton.className = "upgrade style2";
         } else if (this.pumpCountDowns[pumpIndex] <= 0 && Boolean(pumpIsWorking)) {
-            pumpCollectButton.disabled = false; 
-            pumpCollectButton.className = "collect style"; 
-            pumpRefuelButton.disabled = true; 
+            pumpCollectButton.disabled = false;
+            pumpCollectButton.className = "collect style";
+            pumpRefuelButton.disabled = true;
             pumpRefuelButton.className = "refuel-disabled";
-            pumpUpgradeButton.disabled = true; 
-            pumpUpgradeButton.className = "upgrade-disabled"; 
+            pumpUpgradeButton.disabled = true;
+            pumpUpgradeButton.className = "upgrade-disabled";
         }
         console.log("2");
     }
+
     async updatePumpCooldown(pumpIndex) {
         let pump = await this.contract.methods.userPumps(this.userAddress, pumpIndex).call();
-        this.pumpCountDowns[pumpIndex] = await this.contract.methods
-            .getRemainingCooldown(pumpIndex)
-            .call({ from: this.userAddress });
-        if(this.pumpCountDowns[pumpIndex] > 0){
+        this.pumpCountDowns[pumpIndex] = await this.contract.methods.getRemainingCooldown(pumpIndex).call({ from: this.userAddress });
+        if (this.pumpCountDowns[pumpIndex] > 0) {
             this.pumpCountDowns[pumpIndex] = parseInt(this.pumpCountDowns[pumpIndex]) + parseInt(10);
             let timeElement = document.getElementById(`pump-time-${pumpIndex}`);
             let timeBarElement = document.getElementById(`pump-progress-${pumpIndex}`);
@@ -413,90 +462,85 @@ class DApp {
                 timeElement.innerText = `Time: ${this.pumpCountDowns[pumpIndex]}`;
                 let percentRemaining = (this.pumpCountDowns[pumpIndex] / pump.refuelTime) * 100;
                 timeBarElement.style.width = `${percentRemaining}%`;
-            },1000);
+            }, 1000);
         }
-        console.log("3");  
+        console.log("3");
     }
+
     async updateTotalMinedBar() {
         this.totalMinedBar_HTML.style.color = 'black';
         this.totalMinedElement_HTML.innerText = `Mined PWL: ${this.totalMined}`;
         let mileStone_1 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(0).call()));
         if (this.totalMined < mileStone_1) {
-            this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_1) * 100}%`;
-            if (mileStone_1 - this.totalMined  <= 10000) {
+            this.totalMinedBar_HTML.style.width = `${(this.totalMined / mileStone_1) * 100}%`;
+            if (mileStone_1 - this.totalMined <= 10000) {
                 this.totalMinedElement_HTML.style.color = 'red';
                 this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_1}`;
             }
-            
-        }
-        else {
-            let mileStone_2 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(1)
-            .call({from: this.userAddress})));
+
+        } else {
+            let mileStone_2 = parseFloat(this.web3.utils.fromWei(await this.contract.methods.miningMilestones(1).call({ from: this.userAddress })));
             this.MileStoneElement_HTML.innerText = `Mile Stone: ${mileStone_2}`;
-            this.totalMinedBar_HTML.style.width = `${(this.totalMined/mileStone_2) * 100}%`;
+            this.totalMinedBar_HTML.style.width = `${(this.totalMined / mileStone_2) * 100}%`;
             if (mileStone_2 - this.totalMined <= 50000) {
                 this.totalMinedElement_HTML.style.color = 'red';
                 this.MileStoneElement_HTML.innerText = `!!! Mile Stone is Upcoming !!!\nMile Stone: ${mileStone_2}`;
             }
-
         }
     }
+
     async updateButtons() {
         // Buy pump button
-        if(this.userPumpsLength == this.maxPumps){
-            //this.buyPumpButton_HTML.disabled = true;
-            this.buyPumpButton_HTML.className = ".button-style-disabled";
+        if (this.userPumpsLength == this.maxPumps) {
+            this.buyPumpButton_HTML.disabled = true;
+            this.buyPumpButton_HTML.className = "button-style-disabled";
             alert("Must purchase extra place");
-        }
-        else {
+        } else {
             this.buyPumpButton_HTML.disabled = false;
             this.buyPumpButton_HTML.className = "button-style";
         }
         // Buy extra place button
-        if(this.maxPumps == 5){
+        if (this.maxPumps == 5) {
             this.buyExtraPlaceButton_HTML.disabled = true;
             this.buyExtraPlaceButton_HTML.className = "button-style-disabled";
         }
         // Refinery buttons
-        if(this.tokenBalance < 3){
+        if (this.tokenBalance < 3) {
             this.drillOilButton_0_HTML.disabled = true;
             this.drillOilButton_0_HTML.className = "style3-disabled";
-        }
-        else if(this.tokenBalance < 5){
+        } else if (this.tokenBalance < 5) {
             this.drillOilButton_1_HTML.disabled = true;
             this.drillOilButton_1_HTML.className = "style3-disabled";
-        }
-        else if(this.tokenBalance < 10){
+        } else if (this.tokenBalance < 10) {
             this.drillOilButton_2_HTML.disabled = true;
             this.drillOilButton_2_HTML.className = "style3-disabled";
         }
         // Pump Buttons
-        for(let index = 0; index<this.userPumpsLength; index++){
+        for (let index = 0; index < this.userPumpsLength; index++) {
             let pump = await this.contract.methods.userPumps(this.userAddress, index).call();
-            let upgradeButton = document.getElementById(`upgrade-button-${index}`); 
-            let refuelButton = document.getElementById(`refuel-button-${index}`); ;
+            let upgradeButton = document.getElementById(`upgrade-button-${index}`);
+            let refuelButton = document.getElementById(`refuel-button-${index}`);
             // Check is token enough to upgrade pump
-            if(this.tokenBalance < this.getUpgradeCosts(parseInt(pump.level)+1)){
+            if (this.tokenBalance < await this.getUpgradeCosts(parseInt(pump.level) + 1)) {
                 upgradeButton.disabled = true;
                 upgradeButton.className = "upgrade-disabled";
-            }
-            else {
+            } else {
                 upgradeButton.disabled = false;
                 upgradeButton.className = "upgrade style2";
             }
             // Check is token enough to refuel pump
-            if(this.tokenBalance < pump.fuelCapacity * this.getCurrentFuelPrice){
+            if (this.tokenBalance < pump.fuelCapacity * this.fuelPrice) {
                 refuelButton.disabled = true;
                 refuelButton.className = "refuel-disabled";
-            }
-            else {
+            } else {
                 refuelButton.disabled = false;
                 refuelButton.className = "refuel style1";
             }
         }
     }
+
     /* ---------------------------------------------- HTML METHODS ---------------------------------------------- */
-    async defineFromHTML() { // Define html elements by id
+    async defineFromHTML() { // Define HTML elements by ID
         this.loadingIcon = document.getElementById('loading-icon');
         this.totalMinedBar_HTML = document.getElementById('total-mined-token-bar');
         this.totalMinedElement_HTML = document.getElementById('total-mined');
@@ -515,8 +559,9 @@ class DApp {
         this.container_2_HTML = document.querySelectorAll(".container2");
         this.container_3_HTML = document.querySelectorAll(".container3 .card2");
         this.part_2_HTML = document.querySelectorAll(".part2");
+
         // Pump buttons
-        this.buyPumpButton_HTML = document.getElementById('buy-pump-button'); 
+        this.buyPumpButton_HTML = document.getElementById('buy-pump-button');
         this.collectPumpButton_0_HTML = document.getElementById("collect-button-0");
         this.collectPumpButton_1_HTML = document.getElementById("collect-button-1");
         this.collectPumpButton_2_HTML = document.getElementById("collect-button-2");
@@ -532,87 +577,101 @@ class DApp {
         this.upgradeButton_2_HTML = document.getElementById("upgrade-button-2");
         this.upgradeButton_3_HTML = document.getElementById("upgrade-button-3");
         this.upgradeButton_4_HTML = document.getElementById("upgrade-button-4");
+
         // Extra place button
         this.buyExtraPlaceButton_HTML = document.getElementById('buy-extra-place-button');
+
         // Refinery Buttons
         this.buyRefineryButton_HTML = document.getElementById('buy-refinery-button');
         this.drillOilButton_0_HTML = document.getElementById('dig-oil-button-0');
         this.drillOilButton_1_HTML = document.getElementById('dig-oil-button-1');
         this.drillOilButton_2_HTML = document.getElementById('dig-oil-button-2');
-        
     }
+
     displayContainer() {
         // Makes the display property "flex" for each element
-        this.container_HTML.forEach(function(element) {
+        this.container_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
+        });
     }
+
     hideContainer() {
         // Makes the display property "none" for each element
-        this.container_HTML.forEach(function(element) {
+        this.container_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
+
     displayPart2() {
         // Makes the display property "flex" for each element
-        this.part_2_HTML.forEach(function(element) {
+        this.part_2_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
+        });
     }
+
     hidePart2() {
         // Makes the display property "none" for each element
-        this.part_2_HTML.forEach(function(element) {
+        this.part_2_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
+
     displayContainer2() {
         // Makes the display property "flex" for each element
-        this.container_2_HTML.forEach(function(element) {
+        this.container_2_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
+        });
     }
+
     hideContainer2() {
         // Makes the display property "none" for each element
-        this.container_2_HTML.forEach(function(element) {
+        this.container_2_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
+
     displayContainer3() {
         // Makes the display property "flex" for each element
-        this.container_3_HTML.forEach(function(element) {
+        this.container_3_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
+        });
     }
+
     hideContainer3() {
         // Makes the display property "none" for each element
-        this.container_3_HTML.forEach(function(element) {
+        this.container_3_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
+
     displayPurchasePart() {
         // Makes the display property "flex" for each element
-        this.purchasePart_HTML.forEach(function(element) {
+        this.purchasePart_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
-    }                   
-    hidePurchasePart() {                                    
+        });
+    }
+
+    hidePurchasePart() {
         // Makes the display property "none" for each element
-        this.purchasePart_HTML.forEach(function(element) {
+        this.purchasePart_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
+
     displayRefineryPart() {
-        this.refineryPart_HTML.forEach(function(element) {
+        this.refineryPart_HTML.forEach(function (element) {
             element.style.display = "flex";
-            });
+        });
     }
+
     hideRefineryPart() {
-        this.refineryPart_HTML.forEach(function(element) {
+        this.refineryPart_HTML.forEach(function (element) {
             element.style.display = "none";
-            });
+        });
     }
 }
-window.onload = async function() {
+
+window.onload = async function () {
     let dApp = new DApp();
     await dApp.initialize();
 }
