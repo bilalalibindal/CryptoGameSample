@@ -51,7 +51,7 @@ class DApp {
     async switchToNetwork() {
         // Define network.
         const amoyChain = {
-            chainId: '80002',
+            chainId: '0x13881',
             chainName: 'Polygon Amoy Testnet',
             nativeCurrency: {
                 name: 'Matic',
@@ -72,7 +72,7 @@ class DApp {
             // And switch to network we added.
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '80002' }],
+                params: [{ chainId: '0x13881' }],
             });
         } catch (error) {
             console.error(error);
