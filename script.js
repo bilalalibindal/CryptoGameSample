@@ -50,29 +50,29 @@ class DApp {
     }
     async switchToNetwork() {
         // Define network.
-        const mumbaiChain = {
-            chainId: '0x13881',
-            chainName: 'Mumbai Testnet',
+        const amoyChain = {
+            chainId: '80002',
+            chainName: 'Polygon Amoy Testnet',
             nativeCurrency: {
                 name: 'Matic',
                 symbol: 'MATIC',
                 decimals: 18,
             },
-            rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-            blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+            rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+            blockExplorerUrls: ['https://amoy.polygonscan.com/'],
         };
     
         try {
             // Add network to metamask.
             await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [mumbaiChain],
+                params: [amoyChain],
             });
     
             // And switch to network we added.
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x13881' }],
+                params: [{ chainId: '80002' }],
             });
         } catch (error) {
             console.error(error);
